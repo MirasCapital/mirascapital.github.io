@@ -20,7 +20,7 @@ body {
   animation: slideInFromLeft 1s ease-in-out;
 }
 
-@media (max-width: 390px) { /* Target screens up to 768px wide (typical mobile breakpoint) */
+@media (max-width: 900px) { /* Target screens up to 768px wide (typical mobile breakpoint) */
   .container {
     bottom: 0.5in; /* Adjust for mobile */
     left: 0.5in; /* Adjust for mobile */
