@@ -1,8 +1,14 @@
 body {
-  background-color: black;
-  font-family: sans-serif;
-  text-align: left;
-  color: white;
+  /* Gradient background */
+  background: linear-gradient(to bottom, #e4e3e3 0%, #303030 66%, #000000 100%);
+  /* Ensure the gradient covers the entire viewport */
+  height: 100vh;
+  margin: 0;
+  /* Center content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white; /* Change text color if needed */
 }
 
 .container {
