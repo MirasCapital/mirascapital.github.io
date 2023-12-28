@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap'); /* Import Josefin Sans SemiBold from Google Fonts */
+
 body {
   /* Gradient background */
-  background: linear-gradient(to bottom, #e4e3e3 0%, #303030 66%, #000000 100%);
+  background: linear-gradient(to bottom, #e4e3e3 0%, #000000 80%, #000000 100%);
   /* Ensure the gradient covers the entire viewport */
   height: 100vh;
   margin: 0;
@@ -19,7 +21,8 @@ body {
 }
 
 .heading {
-  font-family: Josefin Sans SemiBold;
+  font-family: 'Josefin Sans', sans-serif; /* Use the imported font with a fallback */
+  font-weight: 700; /* Ensure semi-bold weight */
   font-size: 62px;
   color: white;
   margin-bottom: 0.5rem;
