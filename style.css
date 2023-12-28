@@ -1,0 +1,38 @@
+body {
+  background-color: black;
+  font-family: sans-serif;
+  text-align: left;
+  color: white;
+}
+
+.container {
+  position: absolute;
+  bottom: 1in;
+  left: 1in;
+  animation: slideInFromLeft 1s ease-in-out;
+}
+
+.heading {
+  font-family: Josefin Sans SemiBold;
+  font-size: 62px;
+  color: white;
+  margin-bottom: 0.5rem;
+  animation: none;
+}
+
+.subheading {
+  font-family: Arial;
+  font-size: 20px;
+  color: lightgrey;
+  font-weight: bold;
+  animation: none;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
