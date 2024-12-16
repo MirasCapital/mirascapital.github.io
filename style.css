@@ -17,34 +17,37 @@ body {
 }
 
 .container {
-  padding: 2rem;
+  position: absolute;
+  bottom: 5%;       /* More responsive than using inches */
+  left: 5%;         /* More responsive than using inches */
+  text-align: left; /* Keep text left-aligned */
   animation: slideInFromLeft 1s ease-in-out;
+  padding: 2rem;    /* Add some padding for better spacing */
 }
 
-/* Use clamp for fluid typography:
-   clamp(minimum, preferred, maximum)
-   This will allow the font size to adjust smoothly as the viewport changes. */
 .heading {
   font-family: 'Josefin Sans', sans-serif;
   font-weight: 700;
-  font-size: clamp(2rem, 5vw, 4rem); /* Scales between ~32px (2rem) and 64px (4rem) */
+  /* Use clamp for fluid typography: scales between a minimum, a "preferred" (based on viewport), and a maximum */
+  font-size: clamp(2rem, 5vw, 4rem);
   color: white;
   margin-bottom: 0.5rem;
-  line-height: 1.2; /* Good line-height for larger headings */
+  line-height: 1.2;
 }
 
 .subheading {
   font-family: Arial, sans-serif;
-  font-size: clamp(1rem, 2.5vw, 1.5rem); /* Will scale text smoothly */
+  /* Also fluid typography for subheading */
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
   color: lightgrey;
   font-weight: bold;
   line-height: 1.4;
 }
 
-/* Increase minimum font sizes on smaller screens for better readability */
+/* Adjust typography at breakpoints for even better readability on smaller screens */
 @media (max-width: 900px) {
   .heading {
-    font-size: clamp(2.2rem, 6vw, 4rem); /* Increase base min size on smaller screens */
+    font-size: clamp(2.2rem, 6vw, 4rem);
   }
   .subheading {
     font-size: clamp(1.1rem, 3vw, 1.6rem);
@@ -53,7 +56,7 @@ body {
 
 @media (max-width: 600px) {
   .heading {
-    font-size: clamp(2.5rem, 7vw, 4rem); /* Even larger base min size on mobile */
+    font-size: clamp(2.5rem, 7vw, 4rem);
   }
   .subheading {
     font-size: clamp(1.2rem, 3.5vw, 1.7rem);
@@ -61,7 +64,7 @@ body {
 
   .container {
     padding: 1rem;
-    text-align: center;
+    /* Still left-aligned but container is smaller */
   }
 }
 
