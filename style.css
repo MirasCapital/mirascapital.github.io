@@ -1,47 +1,72 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap'); /* Import Josefin Sans SemiBold */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
+
+/* Ensure the viewport meta tag is in the HTML:
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+*/
 
 body {
   /* Gradient background */
   background: linear-gradient(to bottom, #e4e3e3 0%, #000000 80%, #000000 100%);
-  /* Ensure the gradient covers the entire viewport */
-  height: 100vh;
   margin: 0;
-  /* Center content */
+  /* Use Flex to center content */
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white; /* Change text color if needed */
+  color: white;
+  height: 100vh; /* ensures the gradient fills the visible height */
+  overflow: hidden; /* optional if needed */
 }
 
 .container {
-  position: absolute;
-  bottom: 1in;
-  left: 1in;
+  /* Instead of absolute positioning, let’s use relative units and padding */
+  padding: 2rem;
   animation: slideInFromLeft 1s ease-in-out;
-}
-
-@media (max-width: 900px) { /* Target screens up to 768px wide (typical mobile breakpoint) */
-  .container {
-    bottom: 0.5in; /* Adjust for mobile */
-    left: 0.5in; /* Adjust for mobile */
-  }
 }
 
 .heading {
   font-family: 'Josefin Sans', sans-serif;
   font-weight: 700;
-  font-size: 62px;
+  font-size: 4vw; /* Responsive font size based on viewport width */
   color: white;
   margin-bottom: 0.5rem;
-  animation: none;
 }
 
 .subheading {
-  font-family: Arial;
-  font-size: 20px;
+  font-family: Arial, sans-serif;
+  font-size: 1.2rem;
   color: lightgrey;
   font-weight: bold;
-  animation: none;
+}
+
+/* For smaller devices (like tablets and large phones): */
+@media (max-width: 900px) {
+  .heading {
+    font-size: 7vw; /* Increase relative size as space gets smaller */
+  }
+
+  .subheading {
+    font-size: 1rem;
+  }
+
+  .container {
+    padding: 1.5rem;
+  }
+}
+
+/* For even smaller devices (small phones): */
+@media (max-width: 600px) {
+  .heading {
+    font-size: 9vw; /* Even larger relative size for smaller screens */
+  }
+
+  .subheading {
+    font-size: 0.9rem;
+  }
+
+  .container {
+    padding: 1rem;
+    text-align: center; /* Center text on small screens */
+  }
 }
 
 @keyframes slideInFromLeft {
