@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
 
-/* Make sure you have this meta tag in the HTML:
+/* Ensure the viewport meta tag is in the HTML:
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 */
 
@@ -8,60 +8,64 @@ body {
   /* Gradient background */
   background: linear-gradient(to bottom, #e4e3e3 0%, #000000 80%, #000000 100%);
   margin: 0;
+  /* Use Flex to center content */
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
-  height: 100vh;
-  overflow: hidden;
+  height: 100vh; /* ensures the gradient fills the visible height */
+  overflow: hidden; /* optional if needed */
 }
 
 .container {
+  /* Instead of absolute positioning, let’s use relative units and padding */
   padding: 2rem;
   animation: slideInFromLeft 1s ease-in-out;
 }
 
-/* Use clamp for fluid typography:
-   clamp(minimum, preferred, maximum)
-   This will allow the font size to adjust smoothly as the viewport changes. */
 .heading {
   font-family: 'Josefin Sans', sans-serif;
   font-weight: 700;
-  font-size: clamp(2rem, 5vw, 4rem); /* Scales between ~32px (2rem) and 64px (4rem) */
+  font-size: 4vw; /* Responsive font size based on viewport width */
   color: white;
   margin-bottom: 0.5rem;
-  line-height: 1.2; /* Good line-height for larger headings */
 }
 
 .subheading {
   font-family: Arial, sans-serif;
-  font-size: clamp(1rem, 2.5vw, 1.5rem); /* Will scale text smoothly */
+  font-size: 1.2rem;
   color: lightgrey;
   font-weight: bold;
-  line-height: 1.4;
 }
 
-/* Increase minimum font sizes on smaller screens for better readability */
+/* For smaller devices (like tablets and large phones): */
 @media (max-width: 900px) {
   .heading {
-    font-size: clamp(2.2rem, 6vw, 4rem); /* Increase base min size on smaller screens */
+    font-size: 7vw; /* Increase relative size as space gets smaller */
   }
+
   .subheading {
-    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    font-size: 1rem;
+  }
+
+  .container {
+    padding: 1.5rem;
   }
 }
 
+/* For even smaller devices (small phones): */
 @media (max-width: 600px) {
   .heading {
-    font-size: clamp(2.5rem, 7vw, 4rem); /* Even larger base min size on mobile */
+    font-size: 9vw; /* Even larger relative size for smaller screens */
   }
+
   .subheading {
-    font-size: clamp(1.2rem, 3.5vw, 1.7rem);
+    font-size: 0.9rem;
   }
 
   .container {
     padding: 1rem;
-    text-align: center;
+    text-align: center; /* Center text on small screens */
   }
 }
 
