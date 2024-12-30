@@ -114,15 +114,18 @@ body {
   align-self: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .heading {
-    font-size: 2rem;
+    font-size: clamp(2.5rem, 7vw, 4rem);
+  }
+  .subheading {
+    font-size: clamp(1.2rem, 3.5vw, 1.7rem);
   }
 
-  .subheading, .recent-transactions {
-    font-size: 1rem;
+  .recent-transactions {
+    font-size: clamp(1.2rem, 3.5vw, 1.7rem);
   }
-
+  
   .deals {
     flex-direction: column;
     align-items: center;
