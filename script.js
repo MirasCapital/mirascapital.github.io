@@ -3,11 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const heading = document.querySelector(".heading");
     const subheading = document.querySelector(".subheading");
     const recentTransactions = document.querySelector(".recent-transactions");
-    const deals = document.querySelectorAll(".deal");
-    const dealsContainer = document.querySelector(".deals-container");
+    const deals = document.querySelector(".deals");
   
     let scrollPosition = 0;
-    let activeDealIndex = 0; // Index of the currently showcased deal
     const maxScroll = 100;
   
     // Force a complete page reload when the refresh button is clicked
@@ -47,21 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
         recentTransactions.style.transform = `translateX(-100%)`;
       }
   
-      // Handle desktop deal animations (all deals visible)
-      if (window.innerWidth > 600) {
-        dealsContainer.style.opacity = progress > 0.8 ? "1" : "0";
-        dealsContainer.style.transform = progress > 0.8 ? "translateX(0)" : "translateX(-100%)";
-      }
-  
-      // Handle mobile carousel effect
-      if (window.innerWidth <= 600) {
-        deals.forEach((deal, index) => {
-          if (index === activeDealIndex) {
-            deal.classList.add("active");
-          } else {
-            deal.classList.remove("active");
-          }
-        });
+      // Animate deals in from the left
+      if (progress > 0.8) {
+        deals.style.transform = "translateX(0)";
+        deals.style.opacity = "1";
+      } else {
+        deals.style.transform = `translateX(-100%)`;
+        deals.style.opacity = `0`;
       }
     };
   
@@ -71,16 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const onWheel = (event) => {
       scrollPosition += event.deltaY * 0.095; // Sensitivity for desktop scrolling
       scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
-  
-      // Change active deal based on scroll direction (mobile only)
-      if (window.innerWidth <= 600) {
-        if (event.deltaY > 0 && activeDealIndex < deals.length - 1) {
-          activeDealIndex++;
-        } else if (event.deltaY < 0 && activeDealIndex > 0) {
-          activeDealIndex--;
-        }
-      }
-  
       updateScrollEffects();
     };
   
@@ -98,14 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const deltaY = touchStartY - touchEndY;
       scrollPosition += deltaY * 1; // Increased sensitivity for mobile swipe
       scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
-  
-      // Change active deal based on swipe direction
-      if (deltaY > 0 && activeDealIndex < deals.length - 1) {
-        activeDealIndex++;
-      } else if (deltaY < 0 && activeDealIndex > 0) {
-        activeDealIndex--;
-      }
-  
       updateScrollEffects();
       touchStartY = touchEndY;
     };
