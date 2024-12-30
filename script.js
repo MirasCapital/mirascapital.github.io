@@ -4,43 +4,63 @@ document.addEventListener("DOMContentLoaded", () => {
   const subheading = document.querySelector(".subheading");
   const recentTransactions = document.querySelector(".recent-transactions");
   const deals = document.querySelector(".deals");
-  const dealElements = document.querySelectorAll(".deal");
+  const dealElements = Array.from(document.querySelectorAll(".deal"));
   
   let scrollPosition = 0;
   const maxScroll = 100;
   let currentDealIndex = 0;
-  const isMobile = window.innerWidth <= 600;
 
-  // Force a complete page reload when the refresh button is clicked
-  if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-    window.location.href = window.location.href;
-  }
+  // Initial setup
+  const initializeLayout = () => {
+    if (window.innerWidth <= 768) {
+      dealElements.forEach((deal, index) => {
+        if (index === 0) {
+          deal.style.transform = "translateX(-100%)";
+        } else {
+          deal.style.transform = "translateX(-200%)";
+        }
+        deal.style.opacity = "0";
+      });
+    } else {
+      dealElements.forEach(deal => {
+        deal.style.transform = "";
+        deal.style.opacity = "";
+      });
+    }
+  };
 
-  // Animate the headings in from the left on page load
+  // Initialize on load
+  initializeLayout();
+  window.addEventListener("resize", initializeLayout);
+
+  // Animate headings on page load
   setTimeout(() => {
     heading.style.transform = "translateX(0)";
     subheading.style.transform = "translateX(0)";
   }, 500);
 
-  const updateDealPositions = (progress) => {
-    if (!isMobile) return;
+  const updateMobileDeals = (progress) => {
+    if (window.innerWidth > 768) return;
 
-    const dealProgress = (progress - 0.8) * 5; // Scale progress to deal transitions
-    currentDealIndex = Math.floor(dealProgress);
+    const dealProgress = (progress - 0.8) * 3;
+    const newIndex = Math.min(Math.floor(dealProgress), dealElements.length - 1);
     
+    if (newIndex !== currentDealIndex) {
+      currentDealIndex = newIndex;
+    }
+
     dealElements.forEach((deal, index) => {
       if (index === currentDealIndex) {
-        const transitionProgress = dealProgress - currentDealIndex;
-        deal.style.transform = `translateX(${(1 - transitionProgress) * -100}%)`;
+        deal.style.transform = "translateX(0)";
         deal.style.opacity = "1";
       } else if (index === currentDealIndex - 1) {
-        deal.style.transform = `translateX(100%)`;
+        deal.style.transform = "translateX(200%)";
         deal.style.opacity = "0";
       } else if (index === currentDealIndex + 1) {
-        deal.style.transform = `translateX(-100%)`;
+        deal.style.transform = "translateX(-200%)";
         deal.style.opacity = "0";
       } else {
-        deal.style.transform = `translateX(-100%)`;
+        deal.style.transform = "translateX(-200%)";
         deal.style.opacity = "0";
       }
     });
@@ -49,31 +69,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateScrollEffects = () => {
     const progress = Math.min(scrollPosition / maxScroll, 1);
 
-    // Background card swipe effect
+    // Background card effect
     backgroundCard.style.transform = `translateY(${progress * -100}%)`;
 
-    // Move heading to the top
+    // Heading movement
     const headingTop = Math.max(5, 65 - progress * 85);
     heading.style.transform = `translateY(${headingTop - 65}vh)`;
 
-    // Move subheading to the right and fade it out
+    // Subheading animation
     subheading.style.transform = `translateX(${progress * 100}%)`;
     subheading.style.opacity = `${1 - progress}`;
 
-    // Animate Recent Transactions subheading
+    // Recent Transactions text
     if (progress > 0.8) {
       recentTransactions.style.opacity = `${progress}`;
-      recentTransactions.style.transform = `translateX(0)`;
+      recentTransactions.style.transform = "translateX(0)";
     } else {
       recentTransactions.style.opacity = "0";
-      recentTransactions.style.transform = `translateX(-100%)`;
+      recentTransactions.style.transform = "translateX(-100%)";
     }
 
-    // Handle deals animation differently for mobile and desktop
-    if (isMobile) {
+    // Deals section animation
+    if (window.innerWidth <= 768) {
       if (progress > 0.8) {
         deals.style.opacity = "1";
-        updateDealPositions(progress);
+        updateMobileDeals(progress);
       } else {
         deals.style.opacity = "0";
       }
@@ -88,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Scroll handling
   const onWheel = (event) => {
     scrollPosition += event.deltaY * 0.095;
     scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
@@ -95,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   let touchStartY = 0;
-
   const onTouchStart = (event) => {
     touchStartY = event.touches[0].clientY;
   };
@@ -103,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const onTouchMove = (event) => {
     const touchEndY = event.touches[0].clientY;
     const deltaY = touchStartY - touchEndY;
-    scrollPosition += deltaY * 1;
+    scrollPosition += deltaY * 0.5;
     scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
     updateScrollEffects();
     touchStartY = touchEndY;
@@ -112,7 +132,4 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("wheel", onWheel);
   window.addEventListener("touchstart", onTouchStart);
   window.addEventListener("touchmove", onTouchMove);
-  window.addEventListener("resize", () => {
-    isMobile = window.innerWidth <= 600;
-  });
 });
