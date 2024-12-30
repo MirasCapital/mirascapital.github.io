@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const onTouchMove = (event) => {
     const touchEndY = event.touches[0].clientY;
     const deltaY = touchStartY - touchEndY;
-    scrollPosition += deltaY * 0.2; // Increased sensitivity for mobile swipe
+    scrollPosition += deltaY * 0.4; // Increased sensitivity for mobile swipe
     scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
     updateScrollEffects();
     touchStartY = touchEndY;
