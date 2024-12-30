@@ -142,8 +142,7 @@ body {
     position: fixed; /* Keep deals container fixed on the screen */
     top: 0; /* Align container to the top */
     left: 0;
-    width: 100%; /* Full width of the screen */
-    height: 100%; /* Full height of the screen */
+    width: 80%; /* Full width of the screen */
     overflow: hidden; /* Prevent scrolling within the container */
   }
 
