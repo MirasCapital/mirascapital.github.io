@@ -10,29 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxScroll = 100;
   let currentDealIndex = 0;
 
-  // Initial setup
-  const initializeLayout = () => {
-    if (window.innerWidth <= 768) {
-      dealElements.forEach((deal, index) => {
-        if (index === 0) {
-          deal.style.transform = "translateX(-100%)";
-        } else {
-          deal.style.transform = "translateX(-200%)";
-        }
-        deal.style.opacity = "0";
-      });
-    } else {
-      dealElements.forEach(deal => {
-        deal.style.transform = "";
-        deal.style.opacity = "";
-      });
-    }
-  };
-
-  // Initialize on load
-  initializeLayout();
-  window.addEventListener("resize", initializeLayout);
-
   // Animate headings on page load
   setTimeout(() => {
     heading.style.transform = "translateX(0)";
@@ -40,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 500);
 
   const updateMobileDeals = (progress) => {
-    if (window.innerWidth > 768) return;
+    if (window.innerWidth > 767) return;
 
     const dealProgress = (progress - 0.8) * 3;
     const newIndex = Math.min(Math.floor(dealProgress), dealElements.length - 1);
@@ -51,19 +28,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     dealElements.forEach((deal, index) => {
       if (index === currentDealIndex) {
-        deal.style.transform = "translateX(0)";
+        deal.style.transform = "translate(-50%, -50%)";
         deal.style.opacity = "1";
       } else if (index === currentDealIndex - 1) {
-        deal.style.transform = "translateX(200%)";
+        deal.style.transform = "translate(100%, -50%)";
         deal.style.opacity = "0";
       } else if (index === currentDealIndex + 1) {
-        deal.style.transform = "translateX(-200%)";
+        deal.style.transform = "translate(-200%, -50%)";
         deal.style.opacity = "0";
       } else {
-        deal.style.transform = "translateX(-200%)";
+        deal.style.transform = "translate(-200%, -50%)";
         deal.style.opacity = "0";
       }
     });
+  };
+
+  const updateDesktopDeals = (progress) => {
+    if (window.innerWidth <= 767) return;
+    
+    if (progress > 0.8) {
+      deals.style.transform = "translateX(0)";
+      deals.style.opacity = "1";
+    } else {
+      deals.style.transform = "translateX(-100%)";
+      deals.style.opacity = "0";
+    }
   };
 
   const updateScrollEffects = () => {
@@ -89,22 +78,16 @@ document.addEventListener("DOMContentLoaded", () => {
       recentTransactions.style.transform = "translateX(-100%)";
     }
 
-    // Deals section animation
-    if (window.innerWidth <= 768) {
-      if (progress > 0.8) {
-        deals.style.opacity = "1";
+    // Deals animation
+    if (progress > 0.8) {
+      deals.style.opacity = "1";
+      if (window.innerWidth <= 767) {
         updateMobileDeals(progress);
       } else {
-        deals.style.opacity = "0";
+        updateDesktopDeals(progress);
       }
     } else {
-      if (progress > 0.8) {
-        deals.style.transform = "translateX(0)";
-        deals.style.opacity = "1";
-      } else {
-        deals.style.transform = "translateX(-100%)";
-        deals.style.opacity = "0";
-      }
+      deals.style.opacity = "0";
     }
   };
 
