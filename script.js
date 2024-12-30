@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let scrollPosition = 0;
   const maxScroll = 100;
   let currentDealIndex = 0;
+  const isMobile = () => window.innerWidth <= 767;
 
   // Animate headings on page load
   setTimeout(() => {
@@ -17,35 +18,32 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 500);
 
   const updateMobileDeals = (progress) => {
-    if (window.innerWidth > 767) return;
-
-    const dealProgress = (progress - 0.8) * 3;
-    const newIndex = Math.min(Math.floor(dealProgress), dealElements.length - 1);
+    if (!isMobile()) return;
     
-    if (newIndex !== currentDealIndex) {
-      currentDealIndex = newIndex;
-    }
-
+    // Calculate which deal should be shown based on scroll progress
+    const dealsProgress = (progress - 0.8) * 5; // Spread the remaining 0.2 progress across deals
+    currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
+    
     dealElements.forEach((deal, index) => {
       if (index === currentDealIndex) {
-        deal.style.transform = "translate(-50%, -50%)";
+        // Current deal - center it
         deal.style.opacity = "1";
-      } else if (index === currentDealIndex - 1) {
-        deal.style.transform = "translate(100%, -50%)";
+        deal.style.transform = "translateX(-50%)";
+      } else if (index < currentDealIndex) {
+        // Previous deals - move right
         deal.style.opacity = "0";
-      } else if (index === currentDealIndex + 1) {
-        deal.style.transform = "translate(-200%, -50%)";
-        deal.style.opacity = "0";
+        deal.style.transform = "translateX(100%)";
       } else {
-        deal.style.transform = "translate(-200%, -50%)";
+        // Next deals - move left
         deal.style.opacity = "0";
+        deal.style.transform = "translateX(-200%)";
       }
     });
   };
 
   const updateDesktopDeals = (progress) => {
-    if (window.innerWidth <= 767) return;
-    
+    if (isMobile()) return;
+
     if (progress > 0.8) {
       deals.style.transform = "translateX(0)";
       deals.style.opacity = "1";
@@ -81,13 +79,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Deals animation
     if (progress > 0.8) {
       deals.style.opacity = "1";
-      if (window.innerWidth <= 767) {
+      if (isMobile()) {
         updateMobileDeals(progress);
       } else {
         updateDesktopDeals(progress);
       }
     } else {
       deals.style.opacity = "0";
+      // Reset deals position when scrolling back
+      if (isMobile()) {
+        dealElements.forEach(deal => {
+          deal.style.opacity = "0";
+          deal.style.transform = "translateX(-200%)";
+        });
+      } else {
+        deals.style.transform = "translateX(-100%)";
+      }
     }
   };
 
@@ -112,6 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
     touchStartY = touchEndY;
   };
 
+  // Handle resize
+  window.addEventListener("resize", updateScrollEffects);
   window.addEventListener("wheel", onWheel);
   window.addEventListener("touchstart", onTouchStart);
   window.addEventListener("touchmove", onTouchMove);
