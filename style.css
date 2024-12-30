@@ -1,78 +1,115 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@700&display=swap');
 
-/* Make sure you have this meta tag in the HTML:
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-*/
-
 body {
-  /* Gradient background */
-  background: linear-gradient(to bottom, #e4e3e3 0%, #000000 80%, #000000 100%);
   margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  height: 100vh;
+  height: 200vh;
+  background: #000000;
   overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+.background-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #e4e3e3 0%, #000000 100%);
+  transform: translateY(0);
+  transition: transform 0.5s ease-out;
 }
 
 .container {
   position: absolute;
-  bottom: 5%;       /* More responsive than using inches */
-  left: 5%;         /* More responsive than using inches */
-  text-align: left; /* Keep text left-aligned */
-  animation: slideInFromLeft 1s ease-in-out;
-  padding: 2rem;    /* Add some padding for better spacing */
+  width: 100%;
+  bottom: 5%;
+  left: 5%;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
 }
 
 .heading {
   font-family: 'Josefin Sans', sans-serif;
   font-weight: 700;
-  /* Use clamp for fluid typography: scales between a minimum, a "preferred" (based on viewport), and a maximum */
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: 3rem;
   color: white;
-  margin-bottom: 0.5rem;
-  line-height: 1.2;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  position: relative;
+  opacity: 1;
+  transform: translateX(-100%);
+  transition: transform 1s ease-out, top 0.5s ease-out;
 }
 
 .subheading {
-  font-family: Arial, sans-serif;
-  /* Also fluid typography for subheading */
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-size: 1.5rem;
   color: lightgrey;
   font-weight: bold;
-  line-height: 1.4;
+  white-space: nowrap;
+  position: relative;
+  opacity: 1;
+  transform: translateX(-100%);
+  transition: transform 1s ease-out, opacity 0.5s ease-out;
 }
 
-/* Adjust typography at breakpoints for even better readability on smaller screens */
-@media (max-width: 900px) {
-  .heading {
-    font-size: clamp(2.2rem, 6vw, 4rem);
-  }
-  .subheading {
-    font-size: clamp(1.1rem, 3vw, 1.6rem);
-  }
+.recent-transactions {
+  font-size: 1.5rem;
+  color: lightgrey;
+  font-weight: bold;
+  white-space: nowrap;
+  position: absolute;
+  bottom: 5%; /* Same position as the previous subheading */
+  left: 5%;
+  opacity: 0; /* Initially hidden */
+  transform: translateX(-100%); /* Start off-screen to the left */
+  transition: transform 1s ease-out, opacity 1s ease-out;
 }
 
-@media (max-width: 600px) {
-  .heading {
-    font-size: clamp(2.5rem, 7vw, 4rem);
-  }
-  .subheading {
-    font-size: clamp(1.2rem, 3.5vw, 1.7rem);
-  }
-
-  .container {
-    padding: 1rem;
-    /* Still left-aligned but container is smaller */
-  }
+.deals {
+  position: absolute;
+  width: 100%;
+  top: 30%;
+  display: flex;
+  justify-content: space-around;
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: transform 1s ease-out, opacity 1s ease-out;
 }
 
-@keyframes slideInFromLeft {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+.deal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  background: rgb(255, 255, 255);
+  padding: 1.5rem;
+  border: 2px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 150px;
+  margin: 1rem;
+  height: 220px;
+}
+
+.deal img {
+  max-width: 120px;
+  max-height: 60px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.deal .type {
+  font-size: 0.8rem;
+  margin: 0.5rem 0;
+}
+
+.deal .line {
+  height: 1px;
+  background: #ccc;
+  margin: 0.5rem 0;
+}
+
+.deal .year {
+  font-size: 0.8rem;
+  color: #555;
+  margin-top: auto;
+  align-self: center;
 }
