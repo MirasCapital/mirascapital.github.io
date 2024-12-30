@@ -142,9 +142,9 @@ body {
 
   .deal {
     position: fixed;
-    left: 50%;
+    left: 5%;
     top: 45%;
-    width: 280px; /* Adjust width for mobile */
+    width: 150px; /* Adjust width for mobile */
     margin: 0;
     transform: translateX(-200%); /* Start hidden on the left */
     opacity: 0;
