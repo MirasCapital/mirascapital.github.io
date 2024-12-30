@@ -64,12 +64,13 @@ body {
   transition: transform 1s ease-out, opacity 1s ease-out;
 }
 
-.deals {
+.deals-container {
   position: absolute;
   width: 100%;
   top: 30%;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
   opacity: 0;
   transform: translateX(-100%);
   transition: transform 1s ease-out, opacity 1s ease-out;
@@ -84,9 +85,17 @@ body {
   padding: 1.5rem;
   border: 2px solid #ccc;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 150px;
+  width: 90%; /* Adjusted width for mobile */
   margin: 1rem;
   height: 220px;
+  opacity: 0;
+  transform: scale(0.9); /* Slightly smaller when inactive */
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.deal.active {
+  opacity: 1;
+  transform: scale(1); /* Scale up when active */
 }
 
 .deal img {
@@ -125,14 +134,9 @@ body {
   .recent-transactions {
     font-size: clamp(1.2rem, 3.5vw, 1.7rem);
   }
-  
-  .deals {
+
+  .deals-container {
     flex-direction: column;
     align-items: center;
-  }
-
-  .deal {
-    width: 90%;
-    margin: 1rem 0;
   }
 }
