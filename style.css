@@ -136,28 +136,31 @@ body {
   }
   
   .deals {
-    display: block;
-    position: fixed; /* Keep it fixed for smooth scrolling */
-    top: 50%; /* Center deals vertically */
-    left: 50%; /* Center deals horizontally */
-    transform: translate(-50%, -50%); /* Ensure proper centering */
-    width: 100%; /* Allow horizontal space for deals */
+    display: flex; /* Use flex for proper centering */
+    justify-content: center; /* Horizontal centering */
+    align-items: center; /* Vertical centering */
+    position: fixed; /* Ensure the container stays fixed on the screen */
+    top: 50%; /* Center the deals container vertically */
+    left: 50%; /* Center the deals container horizontally */
+    transform: translate(-50%, -50%); /* Correct centering */
+    width: 100%; /* Full width for mobile screens */
+    height: 100%; /* Full height to maintain centering */
   }
 
   .deal {
-    position: absolute; /* Use absolute positioning for individual deals */
-    left: 50%; /* Center deals horizontally within the container */
-    top: 50%; /* Center deals vertically within the container */
+    position: absolute; /* Ensure deals stack properly */
+    left: 50%; /* Center each deal horizontally */
+    top: 50%; /* Center each deal vertically */
     transform: translate(-50%, -50%) scale(0); /* Start hidden and scaled down */
-    width: 80%; /* Adjust width for smaller screens */
-    max-width: 300px; /* Ensure deals don't get too large */
-    opacity: 0; /* Start hidden */
+    width: 90%; /* Slightly smaller width for smaller screens */
+    max-width: 280px; /* Limit the maximum width */
+    opacity: 0; /* Hidden initially */
     transition: transform 0.5s ease, opacity 0.5s ease;
   }
   
   .deal.active {
-    transform: translate(-50%, -50%) scale(1); /* Center and scale active deal */
-    opacity: 1; /* Make active deal visible */
+    transform: translate(-50%, -50%) scale(1); /* Center and scale up */
+    opacity: 1; /* Fully visible */
   }
 }
 
