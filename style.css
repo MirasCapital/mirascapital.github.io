@@ -136,31 +136,64 @@ body {
   }
   
   .deals {
-    display: flex; /* Use flex for proper centering */
-    justify-content: center; /* Horizontal centering */
-    align-items: center; /* Vertical centering */
-    position: fixed; /* Ensure the container stays fixed on the screen */
-    top: 50%; /* Center the deals container vertically */
-    left: 50%; /* Center the deals container horizontally */
-    transform: translate(-50%, -50%); /* Correct centering */
-    width: 100%; /* Full width for mobile screens */
-    height: 100%; /* Full height to maintain centering */
+    display: flex; /* Use flexbox for alignment */
+    justify-content: center; /* Horizontally center the active deal */
+    align-items: center; /* Vertically center the active deal */
+    position: fixed; /* Keep deals container fixed on the screen */
+    top: 0; /* Align container to the top */
+    left: 0;
+    width: 100%; /* Full width of the screen */
+    height: 100%; /* Full height of the screen */
+    overflow: hidden; /* Prevent scrolling within the container */
   }
 
   .deal {
-    position: absolute; /* Ensure deals stack properly */
-    left: 50%; /* Center each deal horizontally */
-    top: 50%; /* Center each deal vertically */
-    transform: translate(-50%, -50%) scale(0); /* Start hidden and scaled down */
-    width: 90%; /* Slightly smaller width for smaller screens */
-    max-width: 280px; /* Limit the maximum width */
+    position: relative; /* Deals stay within the container */
+    transform: scale(0.9); /* Slightly reduced scale for inactive deals */
     opacity: 0; /* Hidden initially */
-    transition: transform 0.5s ease, opacity 0.5s ease;
+    width: 80%; /* Limit deal width to 80% of the screen */
+    max-width: 300px; /* Prevent deals from getting too large */
+    background-color: #ffffff; /* Ensure background color is consistent */
+    border-radius: 10px; /* Add a slight border radius for better aesthetics */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    transition: transform 0.5s ease, opacity 0.5s ease; /* Smooth transitions */
   }
-  
+
   .deal.active {
-    transform: translate(-50%, -50%) scale(1); /* Center and scale up */
+    transform: scale(1); /* Bring active deal to full size */
     opacity: 1; /* Fully visible */
+    z-index: 10; /* Bring the active deal to the front */
+  }
+
+  .deal img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .deal .type,
+  .deal .line,
+  .deal .year {
+    text-align: center;
+  }
+
+  .deal .type {
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .deal .line {
+    width: 80%;
+    margin: 10px auto;
+    height: 1px;
+    background-color: #ddd;
+  }
+
+  .deal .year {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
   }
 }
 
