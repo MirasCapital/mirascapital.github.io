@@ -151,7 +151,7 @@ body {
     transform: scale(0.9); /* Slightly reduced scale for inactive deals */
     opacity: 0; /* Hidden initially */
     width: 80%; /* Limit deal width to 80% of the screen */
-    max-width: 300px; /* Prevent deals from getting too large */
+    max-width: 200px; /* Prevent deals from getting too large */
     background-color: #ffffff; /* Ensure background color is consistent */
     border-radius: 10px; /* Add a slight border radius for better aesthetics */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
