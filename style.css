@@ -137,17 +137,23 @@ body {
   
   .deals {
     display: block;
-    top: 45%;
+    top: 50%;
   }
 
   .deal {
     position: fixed;
     left: 50%;
     top: 45%;
-    width: 280px;
+    width: 280px; /* Adjust width for mobile */
     margin: 0;
-    transform: translateX(-200%);
+    transform: translateX(-200%); /* Start hidden on the left */
     opacity: 0;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  
+  .deal.active {
+    transform: translateX(-50%); /* Center active deal */
+    opacity: 1;
   }
 }
 
