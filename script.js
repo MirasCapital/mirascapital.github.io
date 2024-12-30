@@ -47,14 +47,22 @@ document.addEventListener("DOMContentLoaded", () => {
         recentTransactions.style.transform = `translateX(-100%)`;
       }
   
-      // Show active deal in the carousel
-      deals.forEach((deal, index) => {
-        if (index === activeDealIndex) {
-          deal.classList.add("active");
-        } else {
-          deal.classList.remove("active");
-        }
-      });
+      // Handle desktop deal animations (all deals visible)
+      if (window.innerWidth > 600) {
+        dealsContainer.style.opacity = progress > 0.8 ? "1" : "0";
+        dealsContainer.style.transform = progress > 0.8 ? "translateX(0)" : "translateX(-100%)";
+      }
+  
+      // Handle mobile carousel effect
+      if (window.innerWidth <= 600) {
+        deals.forEach((deal, index) => {
+          if (index === activeDealIndex) {
+            deal.classList.add("active");
+          } else {
+            deal.classList.remove("active");
+          }
+        });
+      }
     };
   
     /**
@@ -64,11 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
       scrollPosition += event.deltaY * 0.095; // Sensitivity for desktop scrolling
       scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
   
-      // Change active deal based on scroll direction
-      if (event.deltaY > 0 && activeDealIndex < deals.length - 1) {
-        activeDealIndex++;
-      } else if (event.deltaY < 0 && activeDealIndex > 0) {
-        activeDealIndex--;
+      // Change active deal based on scroll direction (mobile only)
+      if (window.innerWidth <= 600) {
+        if (event.deltaY > 0 && activeDealIndex < deals.length - 1) {
+          activeDealIndex++;
+        } else if (event.deltaY < 0 && activeDealIndex > 0) {
+          activeDealIndex--;
+        }
       }
   
       updateScrollEffects();
