@@ -8,6 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let scrollPosition = 0;
     const maxScroll = 100;
   
+    // Force a complete page reload when the refresh button is clicked
+    if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+      window.location.href = window.location.href; // Reloads the URL completely
+    }
+  
     // Animate the headings in from the left on page load
     setTimeout(() => {
       heading.style.transform = "translateX(0)";
@@ -51,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   
     /**
-     * Handle scroll events to update the animation progress.
+     * Handle scroll events for desktop (wheel event).
      */
     const onWheel = (event) => {
       scrollPosition += event.deltaY * 0.095;
@@ -59,6 +64,27 @@ document.addEventListener("DOMContentLoaded", () => {
       updateScrollEffects();
     };
   
-    window.addEventListener("wheel", onWheel);
+    /**
+     * Handle touchmove events for mobile.
+     */
+    let touchStartY = 0;
+  
+    const onTouchStart = (event) => {
+      touchStartY = event.touches[0].clientY;
+    };
+  
+    const onTouchMove = (event) => {
+      const touchEndY = event.touches[0].clientY;
+      const deltaY = touchStartY - touchEndY;
+      scrollPosition += deltaY * 0.05;
+      scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
+      updateScrollEffects();
+      touchStartY = touchEndY;
+    };
+  
+    // Add event listeners for desktop and mobile
+    window.addEventListener("wheel", onWheel); // Desktop scrolling
+    window.addEventListener("touchstart", onTouchStart); // Mobile touch start
+    window.addEventListener("touchmove", onTouchMove); // Mobile touch move
   });
   
