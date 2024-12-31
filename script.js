@@ -17,23 +17,30 @@ document.addEventListener("DOMContentLoaded", () => {
     subheading.style.transform = "translateX(0)";
   }, 500);
 
-const updateMobileDeals = (progress) => {
-  if (!isMobile()) return;
+  const updateMobileDeals = (progress) => {
+    if (!isMobile()) return;
+    
+    // Calculate which deal should be shown based on scroll progress
+    const dealsProgress = (progress - 0.8) * 5; // Spread the remaining 0.2 progress across deals
+    currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
+    
+    dealElements.forEach((deal, index) => {
+      if (index === currentDealIndex) {
+        // Current deal - center it
+        deal.style.opacity = "1";
+        deal.style.transform = "translateX(-50%)";
+      } else if (index < currentDealIndex) {
+        // Previous deals - move right
+        deal.style.opacity = "0";
+        deal.style.transform = "translateX(100%)";
+      } else {
+        // Next deals - move left
+        deal.style.opacity = "0";
+        deal.style.transform = "translateX(-200%)";
+      }
+    });
+  };
 
-  // Determine the current deal index based on scroll progress
-  const dealsProgress = (progress - 0.8) * 5; // Spread progress across deals
-  currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
-
-  // Update visibility and position of each deal
-  dealElements.forEach((deal, index) => {
-    if (index === currentDealIndex) {
-      deal.classList.add("active"); // Activate the current deal
-    } else {
-      deal.classList.remove("active"); // Deactivate others
-    }
-  });
-};
-  
   const updateDesktopDeals = (progress) => {
     if (isMobile()) return;
 
