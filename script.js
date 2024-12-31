@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (progress > 0.8) {
       deals.style.opacity = "1";
       if (isMobile()) {
-        updateMobileDeals(progress);
+        updateMobileDeals();
       } else {
         updateDesktopDeals(progress);
       }
@@ -102,47 +102,33 @@ document.addEventListener("DOMContentLoaded", () => {
     updateScrollEffects();
   };
 
+  let touchStartX = 0;
   let touchStartY = 0;
   const onTouchStart = (event) => {
+    touchStartX = event.touches[0].clientX;
     touchStartY = event.touches[0].clientY;
   };
 
   const onTouchMove = (event) => {
+    const touchEndX = event.touches[0].clientX;
     const touchEndY = event.touches[0].clientY;
+
+    const deltaX = touchStartX - touchEndX;
     const deltaY = touchStartY - touchEndY;
 
-    if (isMobile() && Math.abs(deltaY) > 50) {
-      if (deltaY > 0) {
-        // Swipe up - show next deal
-        if (currentDealIndex < maxDeals -1) {
-          currentDealIndex++;
-          updateMobileDeals();
-        } else {
-          // At the last deal, continue scrolling
-          scrollPosition += deltaY * 0.5;
-          scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
-          updateScrollEffects();
-        }
-      } else {
-        // Swipe down - show previous deal
-        if (currentDealIndex > 0) {
-          currentDealIndex--;
-          updateMobileDeals();
-        } else {
-          // At the first deal, reverse scroll
-          scrollPosition += deltaY * 0.5;
-          scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
-          updateScrollEffects();
-        }
-      }
-    } else {
-      // Regular scrolling
+    if (isMobile() && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+      // Horizontal swipe for deals
+      currentDealIndex = (currentDealIndex + 1) % maxDeals; // Cycle forward
+      updateMobileDeals();
+    } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 30) {
+      // Vertical scroll for the rest of the page
       scrollPosition += deltaY * 0.5;
       scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
       updateScrollEffects();
     }
 
-    touchStartY = touchEndY; // Reset touch start position
+    touchStartX = touchEndX; // Reset touch start position
+    touchStartY = touchEndY;
   };
 
   // Handle resize
