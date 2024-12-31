@@ -17,22 +17,50 @@ document.addEventListener("DOMContentLoaded", () => {
     subheading.style.transform = "translateX(0)";
   }, 500);
 
-  const updateMobileDeals = (progress) => {
-  if (!isMobile()) return;
+  const updateMobileDeals = () => {
+    if (!isMobile()) return;
 
-  // Determine the current deal index based on scroll progress
-  const dealsProgress = (progress - 0.8) * 5; // Spread progress across deals
-  currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
+    dealElements.forEach((deal, index) => {
+      if (index === currentDealIndex) {
+        deal.classList.add("active");
+      } else {
+        deal.classList.remove("active");
+      }
+    });
+  };
 
-  // Update visibility and position of each deal
-  dealElements.forEach((deal, index) => {
-    if (index === currentDealIndex) {
-      deal.classList.add("active"); // Activate the current deal
+  const onMobileSwipe = (deltaY) => {
+    if (!isMobile()) return;
+
+    if (deltaY > 0) {
+      // Swipe up - next deal
+      currentDealIndex = (currentDealIndex + 1) % dealElements.length;
     } else {
-      deal.classList.remove("active"); // Deactivate others
+      // Swipe down - previous deal
+      currentDealIndex =
+        (currentDealIndex - 1 + dealElements.length) % dealElements.length;
     }
-  });
-};
+    updateMobileDeals();
+  };
+
+  let touchStartY = 0;
+
+  const onTouchStart = (event) => {
+    touchStartY = event.touches[0].clientY;
+  };
+
+  const onTouchMove = (event) => {
+    const touchEndY = event.touches[0].clientY;
+    const deltaY = touchStartY - touchEndY;
+    onMobileSwipe(deltaY);
+    touchStartY = touchEndY;
+  };
+
+  window.addEventListener("touchstart", onTouchStart);
+  window.addEventListener("touchmove", onTouchMove);
+
+  updateMobileDeals(); // Initialize the first deal
+});
 
   const updateDesktopDeals = (progress) => {
     if (isMobile()) return;
