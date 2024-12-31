@@ -90,7 +90,7 @@ body {
   padding: 1.5rem;
   border: 2px solid #ccc;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  width: 150px;
+  width: 140px;
   margin: 1rem;
   height: 220px;
   transition: transform 0.5s ease-out, opacity 0.5s ease-out;
@@ -141,23 +141,25 @@ body {
     top: 25%; /* Centers the deals container vertically */
     left: 45%; /* Centers the deals container horizontally */
     transform: translate(-50%, -50%);
-    width: 50%;
-    height: 50%;
+    /* transform: translateX(-50%); /* Start off-screen to the left */
+    opacity: 1; /* Initially hidden */
+    transition: transform 1s ease-out, opacity 1s ease-out; /* Smooth transition */
   }
 
   .deal {
     position: absolute;
     left: 50%; /* Center each deal horizontally */
     top: 50%; /* Center each deal vertically */
-    transform: translate(-50%, -50%) scale(0); /* Hidden and scaled down */
-    width: 80%; /* Adjust width for smaller screens */
-    max-width: 300px;
-    /* opacity: 0;  Hidden initially */
-    transition: transform 0.7s ease, opacity 0.5s ease;
+    transform: translateX(-200%); /* Start hidden and scaled down */
+    width: 40%; /* Adjust width for smaller screens */
+    /* height: 50%; */
+    max-width: 140px;
+    opacity: 0;  /* Hidden initially */
+    transition: transform 1s ease, opacity 0.5s ease;
   }
   
   .deal.active {
-    transform: translate(-50%, -50%) scale(1); /* Center and scale up */
+    transform: translateX(-50%); /* Center and scale up */
     opacity: 1; /* Fully visible */
   }
 }

@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let scrollPosition = 0;
   const maxScroll = 100;
   let currentDealIndex = 0;
+  
   const isMobile = () => window.innerWidth <= 767;
 
   // Animate headings on page load
@@ -17,26 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
     subheading.style.transform = "translateX(0)";
   }, 500);
 
-  const updateMobileDeals = (progress) => {
+  const updateMobileDeals = () => {
     if (!isMobile()) return;
-    
-    // Calculate which deal should be shown based on scroll progress
-    const dealsProgress = (progress - 0.8) * 5; // Spread the remaining 0.2 progress across deals
-    currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
-    
+  
     dealElements.forEach((deal, index) => {
       if (index === currentDealIndex) {
-        // Current deal - center it
+        // Current deal - slide it into view from the left
         deal.style.opacity = "1";
-        deal.style.transform = "translateX(-50%)";
-      } else if (index < currentDealIndex) {
-        // Previous deals - move right
-        deal.style.opacity = "0";
-        deal.style.transform = "translateX(100%)";
+        deal.style.transform = "translateX(-50%)"; // Center the active deal
       } else {
-        // Next deals - move left
+        // Hide other deals
         deal.style.opacity = "0";
-        deal.style.transform = "translateX(-200%)";
+        deal.style.transform = "translateX(-200%)"; // Move off-screen to the left
       }
     });
   };
