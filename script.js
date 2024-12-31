@@ -5,11 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const recentTransactions = document.querySelector(".recent-transactions");
   const deals = document.querySelector(".deals");
   const dealElements = Array.from(document.querySelectorAll(".deal"));
-  
+
   let scrollPosition = 0;
   const maxScroll = 100;
   let currentDealIndex = 0;
-  
+  const maxDeals = dealElements.length;
+
   const isMobile = () => window.innerWidth <= 767;
 
   // Animate headings on page load
@@ -20,16 +21,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const updateMobileDeals = () => {
     if (!isMobile()) return;
-  
+
     dealElements.forEach((deal, index) => {
       if (index === currentDealIndex) {
-        // Current deal - slide it into view from the left
+        // Current deal - center it
         deal.style.opacity = "1";
         deal.style.transform = "translateX(-50%)"; // Center the active deal
       } else {
         // Hide other deals
         deal.style.opacity = "0";
-        deal.style.transform = "translateX(-200%)"; // Move off-screen to the left
+        deal.style.transform =
+          index < currentDealIndex
+            ? "translateX(100%)" // Off-screen to the right
+            : "translateX(-200%)"; // Off-screen to the left
       }
     });
   };
@@ -81,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       deals.style.opacity = "0";
       // Reset deals position when scrolling back
       if (isMobile()) {
-        dealElements.forEach(deal => {
+        dealElements.forEach((deal) => {
           deal.style.opacity = "0";
           deal.style.transform = "translateX(-200%)";
         });
@@ -106,10 +110,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const onTouchMove = (event) => {
     const touchEndY = event.touches[0].clientY;
     const deltaY = touchStartY - touchEndY;
-    scrollPosition += deltaY * 0.5;
-    scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
-    updateScrollEffects();
-    touchStartY = touchEndY;
+
+    if (isMobile() && Math.abs(deltaY) > 50) {
+      if (deltaY > 0) {
+        // Swipe up - show next deal
+        if (currentDealIndex < maxDeals -1) {
+          currentDealIndex++;
+          updateMobileDeals();
+        } else {
+          // At the last deal, continue scrolling
+          scrollPosition += deltaY * 0.5;
+          scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
+          updateScrollEffects();
+        }
+      } else {
+        // Swipe down - show previous deal
+        if (currentDealIndex > 0) {
+          currentDealIndex--;
+          updateMobileDeals();
+        } else {
+          // At the first deal, reverse scroll
+          scrollPosition += deltaY * 0.5;
+          scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
+          updateScrollEffects();
+        }
+      }
+    } else {
+      // Regular scrolling
+      scrollPosition += deltaY * 0.5;
+      scrollPosition = Math.max(0, Math.min(scrollPosition, maxScroll));
+      updateScrollEffects();
+    }
+
+    touchStartY = touchEndY; // Reset touch start position
   };
 
   // Handle resize
