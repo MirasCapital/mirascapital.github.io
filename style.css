@@ -150,7 +150,7 @@ body {
   .deal {
     position: absolute; /* Positioned relative to the container */
     left: 50%; /* Center horizontally */
-    top: 50%; /* Center vertically */
+    top: 10%; /* Center vertically */
     transform: translate(-50%, -50%) scale(0); /* Start hidden and scaled down */
     width: 80%; /* Adjust width for smaller screens */
     max-width: 280px; /* Prevent deals from being too large */
