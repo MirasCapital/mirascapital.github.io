@@ -144,7 +144,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%; /* Full height for proper centering */
-    overflow: hidden; /* Prevent scrolling inside the container */
+    /* overflow: hidden;  Prevent scrolling inside the container */
   }
 
   .deal {
