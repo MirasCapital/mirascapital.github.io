@@ -136,12 +136,13 @@ body {
   }
   
   .deals {
-    display: block;
+    display: block; 
     position: fixed; /* Ensures the container stays visible on mobile */
-    top: 50%; /* Centers the deals container vertically */
-    left: 50%; /* Centers the deals container horizontally */
+    top: 25%; /* Centers the deals container vertically */
+    left: 45%; /* Centers the deals container horizontally */
     transform: translate(-50%, -50%);
-    width: 100%;
+    width: 50%;
+    height: 50%;
   }
 
   .deal {
@@ -151,8 +152,8 @@ body {
     transform: translate(-50%, -50%) scale(0); /* Hidden and scaled down */
     width: 80%; /* Adjust width for smaller screens */
     max-width: 300px;
-    opacity: 0; /* Hidden initially */
-    transition: transform 0.5s ease, opacity 0.5s ease;
+    /* opacity: 0;  Hidden initially */
+    transition: transform 0.7s ease, opacity 0.5s ease;
   }
   
   .deal.active {
