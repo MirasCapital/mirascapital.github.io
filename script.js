@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let scrollPosition = 0;
   const maxScroll = 100;
   let currentDealIndex = 0;
-
   const isMobile = () => window.innerWidth <= 767;
 
   // Animate headings on page load
@@ -18,23 +17,29 @@ document.addEventListener("DOMContentLoaded", () => {
     subheading.style.transform = "translateX(0)";
   }, 500);
 
-const updateMobileDeals = (progress) => {
-  if (!isMobile()) return;
-
-  // Calculate which deal should be shown based on scroll progress
-  const dealsProgress = (progress - 0.8) * 5; // Spread progress across deals
-  currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
-
-  dealElements.forEach((deal, index) => {
-    if (index === currentDealIndex) {
-      // Add the active class to the current deal
-      deal.classList.add("active");
-    } else {
-      // Remove the active class from other deals
-      deal.classList.remove("active");
-    }
-  });
-};
+  const updateMobileDeals = (progress) => {
+    if (!isMobile()) return;
+    
+    // Calculate which deal should be shown based on scroll progress
+    const dealsProgress = (progress - 0.8) * 5; // Spread the remaining 0.2 progress across deals
+    currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
+    
+    dealElements.forEach((deal, index) => {
+      if (index === currentDealIndex) {
+        // Current deal - center it
+        deal.style.opacity = "1";
+        deal.style.transform = "translateX(-50%)";
+      } else if (index < currentDealIndex) {
+        // Previous deals - move right
+        deal.style.opacity = "0";
+        deal.style.transform = "translateX(100%)";
+      } else {
+        // Next deals - move left
+        deal.style.opacity = "0";
+        deal.style.transform = "translateX(-200%)";
+      }
+    });
+  };
 
   const updateDesktopDeals = (progress) => {
     if (isMobile()) return;
@@ -73,17 +78,22 @@ const updateMobileDeals = (progress) => {
 
     // Deals animation
     if (progress > 0.8) {
+      deals.style.opacity = "1";
       if (isMobile()) {
         updateMobileDeals(progress);
       } else {
         updateDesktopDeals(progress);
       }
     } else {
+      deals.style.opacity = "0";
+      // Reset deals position when scrolling back
       if (isMobile()) {
-        dealElements.forEach((deal) => deal.classList.remove("active"));
+        dealElements.forEach(deal => {
+          deal.style.opacity = "0";
+          deal.style.transform = "translateX(-200%)";
+        });
       } else {
         deals.style.transform = "translateX(-100%)";
-        deals.style.opacity = "0";
       }
     }
   };
