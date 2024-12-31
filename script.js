@@ -17,50 +17,29 @@ document.addEventListener("DOMContentLoaded", () => {
     subheading.style.transform = "translateX(0)";
   }, 500);
 
-  const updateMobileDeals = () => {
+  const updateMobileDeals = (progress) => {
     if (!isMobile()) return;
-
+    
+    // Calculate which deal should be shown based on scroll progress
+    const dealsProgress = (progress - 0.8) * 5; // Spread the remaining 0.2 progress across deals
+    currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
+    
     dealElements.forEach((deal, index) => {
       if (index === currentDealIndex) {
-        deal.classList.add("active");
+        // Current deal - center it
+        deal.style.opacity = "1";
+        deal.style.transform = "translateX(-50%)";
+      } else if (index < currentDealIndex) {
+        // Previous deals - move right
+        deal.style.opacity = "0";
+        deal.style.transform = "translateX(100%)";
       } else {
-        deal.classList.remove("active");
+        // Next deals - move left
+        deal.style.opacity = "0";
+        deal.style.transform = "translateX(-200%)";
       }
     });
   };
-
-  const onMobileSwipe = (deltaY) => {
-    if (!isMobile()) return;
-
-    if (deltaY > 0) {
-      // Swipe up - next deal
-      currentDealIndex = (currentDealIndex + 1) % dealElements.length;
-    } else {
-      // Swipe down - previous deal
-      currentDealIndex =
-        (currentDealIndex - 1 + dealElements.length) % dealElements.length;
-    }
-    updateMobileDeals();
-  };
-
-  let touchStartY = 0;
-
-  const onTouchStart = (event) => {
-    touchStartY = event.touches[0].clientY;
-  };
-
-  const onTouchMove = (event) => {
-    const touchEndY = event.touches[0].clientY;
-    const deltaY = touchStartY - touchEndY;
-    onMobileSwipe(deltaY);
-    touchStartY = touchEndY;
-  };
-
-  window.addEventListener("touchstart", onTouchStart);
-  window.addEventListener("touchmove", onTouchMove);
-
-  updateMobileDeals(); // Initialize the first deal
-});
 
   const updateDesktopDeals = (progress) => {
     if (isMobile()) return;
