@@ -156,7 +156,7 @@ body {
     max-width: 280px; /* Prevent deals from being too large */
     opacity: 0; /* Initially hidden */
     transition: transform 0.5s ease, opacity 0.5s ease;
-    z-index: 1; /* Ensure visibility */
+    z-index: 9; /* Ensure visibility */
   }
 
   .deal.active {
