@@ -136,37 +136,38 @@ body {
   }
 
   .deals {
-    display: flex; /* Flex layout to manage deal positioning */
-    justify-content: center; /* Center the active deal horizontally */
-    align-items: center; /* Center the active deal vertically */
-    position: fixed; /* Keep the deals fixed on the screen */
-    top: 0; /* Align to the top */
-    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 50%; /* Center the deals container vertically */
+    left: 50%; /* Center the deals container horizontally */
+    transform: translate(-50%, -50%);
     width: 100%;
-    height: 100%; /* Full height for proper centering */
-    /* overflow: hidden;  Prevent scrolling inside the container */
+    height: 100%;
+    overflow: hidden; /* Hide overflowing content */
   }
 
   .deal {
-    position: absolute; /* Positioned relative to the container */
+    position: absolute;
     left: 50%; /* Center horizontally */
-    top: 10%; /* Center vertically */
-    transform: translate(-50%, -50%) scale(0); /* Start hidden and scaled down */
-    width: 80%; /* Adjust width for smaller screens */
+    top: 50%; /* Center vertically */
+    transform: translate(-50%, -50%) scale(0.9); /* Initial scaling for mobile */
+    width: 90%; /* Adjust width for smaller screens */
     max-width: 280px; /* Prevent deals from being too large */
     opacity: 0; /* Initially hidden */
     transition: transform 0.5s ease, opacity 0.5s ease;
-    z-index: 1; /* Ensure visibility */
+    z-index: 1;
   }
 
   .deal.active {
-    transform: translate(-50%, -50%) scale(1); /* Fully visible and centered */
+    transform: translate(-50%, -50%) scale(1); /* Fully visible */
     opacity: 1;
-    z-index: 10; /* Bring the active deal to the front */
+    z-index: 10;
   }
 
   .deal img {
-    max-width: 100%;
+    max-width: 90%;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -196,6 +197,7 @@ body {
     margin-bottom: 10px;
   }
 }
+
 
 
 /* iPad specific styles */
