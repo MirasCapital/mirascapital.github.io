@@ -18,23 +18,23 @@ document.addEventListener("DOMContentLoaded", () => {
     subheading.style.transform = "translateX(0)";
   }, 500);
 
-  const updateMobileDeals = (progress) => {
-    if (!isMobile()) return;
+const updateMobileDeals = (progress) => {
+  if (!isMobile()) return;
 
-    // Calculate which deal should be shown based on scroll progress
-    const dealsProgress = (progress - 0.8) * 5; // Spread the remaining 0.2 progress across deals
-    currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
+  // Calculate which deal should be shown based on scroll progress
+  const dealsProgress = (progress - 0.8) * 5; // Spread progress across deals
+  currentDealIndex = Math.min(Math.floor(dealsProgress), dealElements.length - 1);
 
-    dealElements.forEach((deal, index) => {
-      if (index === currentDealIndex) {
-        // Add the active class to the current deal
-        deal.classList.add("active");
-      } else {
-        // Remove the active class from other deals
-        deal.classList.remove("active");
-      }
-    });
-  };
+  dealElements.forEach((deal, index) => {
+    if (index === currentDealIndex) {
+      // Add the active class to the current deal
+      deal.classList.add("active");
+    } else {
+      // Remove the active class from other deals
+      deal.classList.remove("active");
+    }
+  });
+};
 
   const updateDesktopDeals = (progress) => {
     if (isMobile()) return;
