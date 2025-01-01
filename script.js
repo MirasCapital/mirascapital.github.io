@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxScroll = 100;
   let currentDealIndex = 0;
   const maxDeals = dealElements.length;
+  let isSwiping = false; // Prevent multiple deal transitions during one swipe
 
   const isMobile = () => window.innerWidth <= 767;
 
@@ -116,10 +117,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaX = touchStartX - touchEndX;
     const deltaY = touchStartY - touchEndY;
 
-    if (isMobile() && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+    if (isMobile() && !isSwiping && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
       // Horizontal swipe for deals
-      currentDealIndex = (currentDealIndex + 1) % maxDeals; // Cycle forward
+      isSwiping = true; // Block further swipes until animation completes
+
+      if (deltaX > 0) {
+        // Swipe left - show next deal
+        currentDealIndex = (currentDealIndex + 1) % maxDeals; // Cycle forward
+      } else {
+        // Swipe right - show previous deal
+        currentDealIndex = (currentDealIndex - 1 + maxDeals) % maxDeals; // Cycle backward
+      }
+
       updateMobileDeals();
+
+      // Allow new swipes after the animation finishes
+      setTimeout(() => {
+        isSwiping = false;
+      }, 500); // Match transition duration
     } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 30) {
       // Vertical scroll for the rest of the page
       scrollPosition += deltaY * 0.5;
