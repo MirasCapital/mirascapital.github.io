@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxScroll = 100;
   let currentDealIndex = 0;
   const maxDeals = dealElements.length;
-  let isSwiping = false; // Prevent multiple deal transitions during one swipe
 
   const isMobile = () => window.innerWidth <= 767;
 
@@ -31,10 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         // Hide other deals
         deal.style.opacity = "0";
-        deal.style.transform =
-          index < currentDealIndex
-            ? "translateX(100%)" // Off-screen to the right
-            : "translateX(-200%)"; // Off-screen to the left
+        deal.style.transform = "translateX(-200%)"; // Off-screen to the left
       }
     });
   };
@@ -117,24 +113,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaX = touchStartX - touchEndX;
     const deltaY = touchStartY - touchEndY;
 
-    if (isMobile() && !isSwiping && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+    if (isMobile() && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
       // Horizontal swipe for deals
-      isSwiping = true; // Block further swipes until animation completes
-
-      if (deltaX > 0) {
-        // Swipe left - show next deal
-        currentDealIndex = (currentDealIndex + 1) % maxDeals; // Cycle forward
-      } else {
-        // Swipe right - show previous deal
-        currentDealIndex = (currentDealIndex - 1 + maxDeals) % maxDeals; // Cycle backward
-      }
-
+      currentDealIndex = (currentDealIndex + 1) % maxDeals; // Always cycle forward
       updateMobileDeals();
-
-      // Allow new swipes after the animation finishes
-      setTimeout(() => {
-        isSwiping = false;
-      }, 500); // Match transition duration
     } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 30) {
       // Vertical scroll for the rest of the page
       scrollPosition += deltaY * 0.5;
