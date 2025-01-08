@@ -43,20 +43,16 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
         showMessage('Sending message...', 'info');
         
-        const formData = new FormData();
-        formData.append('name', document.getElementById('name').value);
-        formData.append('email', email);
-        formData.append('mobile', mobile);
-
-        const response = await fetch('https://formsubmit.co/nihat.engel@mirascapital.com', {
+        const formData = new FormData(contactForm);
+        
+        const response = await fetch('https://api.web3forms.com/submit', {
             method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
+            body: formData
         });
 
-        if (response.ok) {
+        const data = await response.json();
+
+        if (data.success) {
             showMessage('Message sent!', 'success');
             contactForm.reset();
         } else {
@@ -65,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
         showMessage('Failed to send. Please try again.', 'error');
     }
-  });
+});
 
   function showMessage(message, type) {
     formMessage.textContent = message;
