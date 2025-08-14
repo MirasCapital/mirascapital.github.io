@@ -264,10 +264,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // --- REPLACEMENT CODE STARTS HERE ---
+
+  let lastAnimationTime = 0;
+  const animationCooldown = 1200; // Cooldown in ms, must be > animation duration
+
   const scrollToSection = (sectionIndex) => {
     const targetPosition = window.innerHeight * sectionIndex;
     
-    // Trigger CSS animations
+    // Trigger CSS animations for the new section
     updateSection();
     
     // Scroll the viewport
@@ -275,23 +280,21 @@ document.addEventListener("DOMContentLoaded", () => {
       top: targetPosition,
       behavior: 'smooth'
     });
-
-    // Set a timeout to unlock scrolling only after animations are complete
-    setTimeout(() => {
-      isAnimating = false;
-    }, 1000); // Animation lock duration
   };
 
   const handleSectionChange = (direction) => {
-    // Gatekeeper: If an animation is running, ignore new requests
-    if (isAnimating) return;
+    const now = Date.now();
+    // Gatekeeper: Check if we are inside the cooldown period
+    if (now - lastAnimationTime < animationCooldown) {
+      return; // Ignore the event if we're still in the cooldown
+    }
 
     const nextSection = currentSection + (direction === 'next' ? 1 : -1);
 
     // Check if the next section is within bounds
     if (nextSection >= 0 && nextSection < totalSections) {
-      // Lock animations
-      isAnimating = true;
+      // Set the timestamp to start the cooldown
+      lastAnimationTime = now;
       currentSection = nextSection;
       scrollToSection(currentSection);
     }
@@ -309,19 +312,22 @@ document.addEventListener("DOMContentLoaded", () => {
   let touchEndY = 0;
 
   const onTouchStart = (event) => {
-    // Only track the starting Y position for vertical swipes
     touchStartY = event.touches[0].clientY;
   };
 
   const onTouchEnd = (event) => {
-    // If an animation is running, don't process the swipe
-    if (isAnimating) return;
+    const now = Date.now();
+    // Also apply cooldown to touch events
+    if (now - lastAnimationTime < animationCooldown) {
+      return;
+    }
 
     touchEndY = event.changedTouches[0].clientY;
     const deltaY = touchEndY - touchStartY;
 
     // Check for a significant vertical swipe
     if (Math.abs(deltaY) > 50) { // 50px swipe threshold
+      lastAnimationTime = now; // Start cooldown
       const direction = deltaY > 0 ? 'prev' : 'next';
       handleSectionChange(direction);
     }
