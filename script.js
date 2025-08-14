@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   
   const updateSection = () => {
-    isAnimating = true;
+    // NOTE: isAnimating flag is now managed by the scroll handlers
     
     switch(currentSection) {
       case 0:
@@ -263,37 +263,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             break;
     }
-
-    setTimeout(() => {
-      isAnimating = false;
-    }, 1000);
   };
 
-  // Replace the existing onWheel function with this:
-  const onWheel = (event) => {
-    if (isAnimating) {
-      event.preventDefault();
-      return;
-    }
-    
-    event.preventDefault();
-    const direction = event.deltaY > 0 ? 'next' : 'prev';
-    
-    if (direction === 'next' && currentSection < totalSections - 1) {
-      currentSection++;
-      scrollToSection(currentSection);
-    } else if (direction === 'prev' && currentSection > 0) {
-      currentSection--;
-      scrollToSection(currentSection);
-    }
-  };
-
-  // Modify the scrollToSection function to this:
   const scrollToSection = (sectionIndex) => {
-    if (isAnimating) return;
-    
     const targetPosition = window.innerHeight * sectionIndex;
-    isAnimating = true;
     
     window.scrollTo({
       top: targetPosition,
@@ -302,14 +275,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateSection();
 
+    // Set a timeout to unlock scrolling after animations are complete
     setTimeout(() => {
-      // Force final position
+      // Force the final position to prevent inaccuracies from smooth scrolling
       window.scrollTo({
         top: targetPosition,
         behavior: 'auto'
       });
       isAnimating = false;
-    }, 1000);
+    }, 1200); // Increased duration to ensure all animations finish
+  };
+
+  const handleSectionChange = (direction) => {
+    if (isAnimating) return;
+
+    if (direction === 'next' && currentSection < totalSections - 1) {
+      isAnimating = true;
+      currentSection++;
+      scrollToSection(currentSection);
+    } else if (direction === 'prev' && currentSection > 0) {
+      isAnimating = true;
+      currentSection--;
+      scrollToSection(currentSection);
+    }
+  };
+
+  const onWheel = (event) => {
+    event.preventDefault();
+    const direction = event.deltaY > 0 ? 'next' : 'prev';
+    handleSectionChange(direction);
   };
 
   let touchStartX = 0;
@@ -331,16 +325,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaY = touchStartY - touchEndY;
     const touchDuration = Date.now() - touchStartTime;
   
-    if (touchDuration > 300) return;
+    if (touchDuration > 300 || (Math.abs(deltaX) < 30 && Math.abs(deltaY) < 30)) return;
   
-    if (isMobile() && currentSection === 2 && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
-      // Handle swiping left or right for deals in Section 2
+    // Prioritize horizontal swipe for deals on the correct section
+    if (isMobile() && currentSection === 2 && Math.abs(deltaX) > Math.abs(deltaY)) {
       updateMobileDeals(deltaX > 0 ? 'next' : 'prev');
-    } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 30) {
+    } else if (Math.abs(deltaY) > Math.abs(deltaX)) {
       // Handle vertical scrolling between sections
       handleSectionChange(deltaY > 0 ? 'next' : 'prev');
     }
   
+    // Reset start positions to prevent cumulative deltas
     touchStartX = touchEndX;
     touchStartY = touchEndY;
   };
