@@ -271,25 +271,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Replace the existing onWheel function with this:
   const onWheel = (event) => {
-    if (isAnimating) return;
+    if (isAnimating) {
+      event.preventDefault();
+      return;
+    }
     
     event.preventDefault();
-    
     const direction = event.deltaY > 0 ? 'next' : 'prev';
+    
     if (direction === 'next' && currentSection < totalSections - 1) {
       currentSection++;
+      scrollToSection(currentSection);
     } else if (direction === 'prev' && currentSection > 0) {
       currentSection--;
+      scrollToSection(currentSection);
     }
-
-    // Smooth scroll to the new section
-    scrollToSection(currentSection);
-    updateSection();
   };
 
   // Modify the scrollToSection function to this:
   const scrollToSection = (sectionIndex) => {
-    if (isAnimating) return; // Add early return if already animating
+    if (isAnimating) return;
     
     const targetPosition = window.innerHeight * sectionIndex;
     isAnimating = true;
@@ -299,45 +300,16 @@ document.addEventListener("DOMContentLoaded", () => {
       behavior: 'smooth'
     });
 
-    // Add a more precise animation reset
-    const animationDuration = 800;
-    setTimeout(() => {
-      // Double check position and adjust if needed
-      const currentPosition = window.scrollY;
-      if (Math.abs(currentPosition - targetPosition) > 2) {
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'auto'
-        });
-      }
-      isAnimating = false;
-    }, animationDuration);
-  };
-
-  // Replace your existing scroll event listener with this one
-  let isScrolling;
-  window.addEventListener('scroll', function(event) {
-    window.clearTimeout(isScrolling);
-    isScrolling = setTimeout(function() {
-      const targetPosition = window.innerHeight * currentSection;
-      if (Math.abs(window.scrollY - targetPosition) > 50) {
-        scrollToSection(currentSection);
-      }
-    }, 66);
-  }, false);
-
-  // Update handleSectionChange to use the new scrollToSection function
-  const handleSectionChange = (direction) => {
-    if (isAnimating) return;
-
-    if (direction === 'next' && currentSection < totalSections - 1) {
-      currentSection++;
-    } else if (direction === 'prev' && currentSection > 0) {
-      currentSection--;
-    }
-    
-    scrollToSection(currentSection);
     updateSection();
+
+    setTimeout(() => {
+      // Force final position
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'auto'
+      });
+      isAnimating = false;
+    }, 1000);
   };
 
   let touchStartX = 0;
