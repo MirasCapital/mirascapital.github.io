@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const maxDeals = dealElements.length;
   let isAnimating = false;
   let isDealSwiping = false;
+  let isAnimatingSection = false;
+  const animationDuration = 900; // ms, should match your CSS/scroll duration
 
   // Form handling
   contactForm.addEventListener('submit', async (e) => {
@@ -271,68 +273,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const scrollToSection = (sectionIndex) => {
     const targetPosition = window.innerHeight * sectionIndex;
-    
-    // Trigger CSS animations for the new section
-    updateSection();
-    
-    // Scroll the viewport
+    isAnimatingSection = true;
+
+    // Animate scroll
     window.scrollTo({
       top: targetPosition,
       behavior: 'smooth'
     });
+
+    updateSection();
+
+    // Release lock after animation
+    setTimeout(() => {
+      isAnimatingSection = false;
+    }, animationDuration);
   };
 
   const handleSectionChange = (direction) => {
-    const now = Date.now();
-    // Gatekeeper: Check if we are inside the cooldown period
-    if (now - lastAnimationTime < animationCooldown) {
-      return; // Ignore the event if we're still in the cooldown
-    }
+    if (isAnimatingSection) return;
 
-    const nextSection = currentSection + (direction === 'next' ? 1 : -1);
+    let nextSection = currentSection + (direction === 'next' ? 1 : -1);
+    if (nextSection < 0 || nextSection >= totalSections) return;
 
-    // Check if the next section is within bounds
-    if (nextSection >= 0 && nextSection < totalSections) {
-      // Set the timestamp to start the cooldown
-      lastAnimationTime = now;
-      currentSection = nextSection;
-      scrollToSection(currentSection);
-    }
+    currentSection = nextSection;
+    scrollToSection(currentSection);
   };
 
   const onWheel = (event) => {
-    // We prevent default scroll behavior to manage it ourselves
     event.preventDefault();
+    if (isAnimatingSection) return;
+
     const direction = event.deltaY > 0 ? 'next' : 'prev';
     handleSectionChange(direction);
   };
 
   // --- Touch Controls ---
   let touchStartY = 0;
-  let touchEndY = 0;
 
   const onTouchStart = (event) => {
     touchStartY = event.touches[0].clientY;
   };
 
   const onTouchEnd = (event) => {
-    const now = Date.now();
-    // Also apply cooldown to touch events
-    if (now - lastAnimationTime < animationCooldown) {
-      return;
-    }
+    if (isAnimatingSection) return;
 
-    touchEndY = event.changedTouches[0].clientY;
+    const touchEndY = event.changedTouches[0].clientY;
     const deltaY = touchEndY - touchStartY;
 
-    // Check for a significant vertical swipe
-    if (Math.abs(deltaY) > 50) { // 50px swipe threshold
-      lastAnimationTime = now; // Start cooldown
+    if (Math.abs(deltaY) > 50) {
       const direction = deltaY > 0 ? 'prev' : 'next';
       handleSectionChange(direction);
     }
   };
-  
+
   // Add passive: false to allow preventDefault in the wheel listener
   window.addEventListener("wheel", onWheel, { passive: false });
   window.addEventListener("touchstart", onTouchStart, { passive: true });
