@@ -142,8 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
   
   const updateSection = () => {
-    // NOTE: isAnimating flag is now managed by the scroll handlers
-    
+    // This function remains the same, but is called more reliably.
     switch(currentSection) {
       case 0:
         // Home section
@@ -268,80 +267,69 @@ document.addEventListener("DOMContentLoaded", () => {
   const scrollToSection = (sectionIndex) => {
     const targetPosition = window.innerHeight * sectionIndex;
     
+    // Trigger CSS animations
+    updateSection();
+    
+    // Scroll the viewport
     window.scrollTo({
       top: targetPosition,
       behavior: 'smooth'
     });
 
-    updateSection();
-
-    // Set a timeout to unlock scrolling after animations are complete
+    // Set a timeout to unlock scrolling only after animations are complete
     setTimeout(() => {
-      // Force the final position to prevent inaccuracies from smooth scrolling
-      window.scrollTo({
-        top: targetPosition,
-        behavior: 'auto'
-      });
       isAnimating = false;
-    }, 1200); // Increased duration to ensure all animations finish
+    }, 1000); // Animation lock duration
   };
 
   const handleSectionChange = (direction) => {
+    // Gatekeeper: If an animation is running, ignore new requests
     if (isAnimating) return;
 
-    if (direction === 'next' && currentSection < totalSections - 1) {
+    const nextSection = currentSection + (direction === 'next' ? 1 : -1);
+
+    // Check if the next section is within bounds
+    if (nextSection >= 0 && nextSection < totalSections) {
+      // Lock animations
       isAnimating = true;
-      currentSection++;
-      scrollToSection(currentSection);
-    } else if (direction === 'prev' && currentSection > 0) {
-      isAnimating = true;
-      currentSection--;
+      currentSection = nextSection;
       scrollToSection(currentSection);
     }
   };
 
   const onWheel = (event) => {
+    // We prevent default scroll behavior to manage it ourselves
     event.preventDefault();
     const direction = event.deltaY > 0 ? 'next' : 'prev';
     handleSectionChange(direction);
   };
 
-  let touchStartX = 0;
+  // --- Touch Controls ---
   let touchStartY = 0;
-  let touchStartTime = 0;
-  
+  let touchEndY = 0;
+
   const onTouchStart = (event) => {
-    touchStartX = event.touches[0].clientX;
+    // Only track the starting Y position for vertical swipes
     touchStartY = event.touches[0].clientY;
-    touchStartTime = Date.now();
   };
 
-  const onTouchMove = (event) => {
-    if (isAnimating || isDealSwiping) return;
-  
-    const touchEndX = event.touches[0].clientX;
-    const touchEndY = event.touches[0].clientY;
-    const deltaX = touchStartX - touchEndX;
-    const deltaY = touchStartY - touchEndY;
-    const touchDuration = Date.now() - touchStartTime;
-  
-    if (touchDuration > 300 || (Math.abs(deltaX) < 30 && Math.abs(deltaY) < 30)) return;
-  
-    // Prioritize horizontal swipe for deals on the correct section
-    if (isMobile() && currentSection === 2 && Math.abs(deltaX) > Math.abs(deltaY)) {
-      updateMobileDeals(deltaX > 0 ? 'next' : 'prev');
-    } else if (Math.abs(deltaY) > Math.abs(deltaX)) {
-      // Handle vertical scrolling between sections
-      handleSectionChange(deltaY > 0 ? 'next' : 'prev');
+  const onTouchEnd = (event) => {
+    // If an animation is running, don't process the swipe
+    if (isAnimating) return;
+
+    touchEndY = event.changedTouches[0].clientY;
+    const deltaY = touchEndY - touchStartY;
+
+    // Check for a significant vertical swipe
+    if (Math.abs(deltaY) > 50) { // 50px swipe threshold
+      const direction = deltaY > 0 ? 'prev' : 'next';
+      handleSectionChange(direction);
     }
-  
-    // Reset start positions to prevent cumulative deltas
-    touchStartX = touchEndX;
-    touchStartY = touchEndY;
   };
   
+  // Add passive: false to allow preventDefault in the wheel listener
+  window.addEventListener("wheel", onWheel, { passive: false });
+  window.addEventListener("touchstart", onTouchStart, { passive: true });
+  window.addEventListener("touchend", onTouchEnd, { passive: true });
   window.addEventListener("resize", updateSection);
-  window.addEventListener("wheel", onWheel);
-  window.addEventListener("touchstart", onTouchStart);
-  window.addEventListener("touchmove", onTouchMove);
 });
