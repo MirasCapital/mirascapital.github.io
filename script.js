@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalSections = 4;
   const maxDeals = dealElements.length;
   let isDealSwiping = false;
+  let isInitialized = false; // Track initialization state
   
   // Improved scroll control variables
   let isScrolling = false;
@@ -86,11 +87,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const isMobile = () => window.innerWidth <= 767;
 
-  // Initial animation
-  setTimeout(() => {
-    heading.style.transform = "translateX(0)";
-    subheading.style.transform = "translateX(0)";
-  }, 500);
+  // Fixed initial animation - wait for proper initialization
+  const initializeAnimations = () => {
+    // Ensure all elements start in their initial positions
+    updateSection();
+    
+    // Wait a bit longer and add a check to ensure elements are ready
+    setTimeout(() => {
+      if (heading && subheading && isInitialized) {
+        heading.style.transform = "translateX(0)";
+        subheading.style.transform = "translateX(0)";
+      }
+    }, 800); // Increased delay to ensure proper initialization
+  };
 
   const updateMobileDeals = (direction = 'next') => {
     if (!isMobile() || isDealSwiping) return;
@@ -228,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
         
       case 3:
-        // Contact section
+        // Contact section - FIXED: Don't disable deal transitions
         heading.style.transform = "translateY(-60vh)";
         subheading.style.transform = "translateX(200%)";
         subheading.style.opacity = "0";
@@ -260,11 +269,8 @@ document.addEventListener("DOMContentLoaded", () => {
           contactIntro.style.opacity = "1";
         }
         
-        if (isMobile()) {
-          dealElements.forEach((deal) => {
-            deal.style.transition = "none";
-          });
-        }
+        // REMOVED: The problematic code that disabled transitions
+        // This was preventing deal swiping in section 3
         break;
     }
   };
@@ -321,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Touch handling with velocity detection
+  // Enhanced touch handling for deal swiping AND section navigation
   const handleTouchStart = (event) => {
     touchStartY = event.touches[0].clientY;
     touchStartTime = Date.now();
@@ -344,7 +350,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaTime = touchEndTime - touchStartTime;
     const velocity = Math.abs(deltaY) / deltaTime;
     
-    // Check for minimum swipe distance and velocity
+    // Check if we're in the deals section on mobile
+    if (currentSection === 2 && isMobile()) {
+      // Check for horizontal swipe first (for deals)
+      const touchStartX = event.changedTouches[0].clientX;
+      const deltaX = touchStartX - event.changedTouches[0].clientX;
+      
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > TOUCH_THRESHOLD) {
+        // Horizontal swipe detected - handle deal navigation
+        const direction = deltaX > 0 ? 'prev' : 'next';
+        updateMobileDeals(direction);
+        return;
+      }
+    }
+    
+    // Check for vertical swipe (section navigation)
     if (Math.abs(deltaY) > TOUCH_THRESHOLD) {
       // Quick swipe or long swipe
       if (velocity > 0.3 || Math.abs(deltaY) > 100) {
@@ -359,6 +379,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // Keyboard navigation
   const handleKeydown = (event) => {
     if (isScrolling) return;
+    
+    // Handle deal navigation in section 2 on mobile
+    if (currentSection === 2 && isMobile()) {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        updateMobileDeals('prev');
+        return;
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        updateMobileDeals('next');
+        return;
+      }
+    }
     
     switch(event.key) {
       case 'ArrowDown':
@@ -405,7 +439,9 @@ document.addEventListener("DOMContentLoaded", () => {
     updateSection();
   });
   
-  // Initialize position
+  // FIXED: Better initialization sequence
   window.scrollTo(0, 0);
+  isInitialized = true;
   updateSection();
+  initializeAnimations();
 });
