@@ -328,8 +328,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Enhanced touch handling for deal swiping AND section navigation
+  let touchStartX = 0;
+  
   const handleTouchStart = (event) => {
     touchStartY = event.touches[0].clientY;
+    touchStartX = event.touches[0].clientX;
     touchStartTime = Date.now();
   };
 
@@ -344,18 +347,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isScrolling) return;
     
     const touchEndY = event.changedTouches[0].clientY;
+    const touchEndX = event.changedTouches[0].clientX;
     const touchEndTime = Date.now();
     
     const deltaY = touchStartY - touchEndY;
+    const deltaX = touchStartX - touchEndX;
     const deltaTime = touchEndTime - touchStartTime;
     const velocity = Math.abs(deltaY) / deltaTime;
     
-    // Check if we're in the deals section on mobile
-    if (currentSection === 2 && isMobile()) {
+    // Check if we're in section 3 (contact) on mobile and deals are visible
+    if (currentSection === 3 && isMobile()) {
       // Check for horizontal swipe first (for deals)
-      const touchStartX = event.changedTouches[0].clientX;
-      const deltaX = touchStartX - event.changedTouches[0].clientX;
-      
       if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > TOUCH_THRESHOLD) {
         // Horizontal swipe detected - handle deal navigation
         const direction = deltaX > 0 ? 'prev' : 'next';
@@ -380,8 +382,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleKeydown = (event) => {
     if (isScrolling) return;
     
-    // Handle deal navigation in section 2 on mobile
-    if (currentSection === 2 && isMobile()) {
+    // Handle deal navigation in section 3 on mobile
+    if (currentSection === 3 && isMobile()) {
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
         updateMobileDeals('prev');
