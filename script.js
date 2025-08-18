@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
         break;
         
       case 3:
-        // Contact section - FIXED: Don't disable deal transitions
+        // Contact section
         heading.style.transform = "translateY(-60vh)";
         subheading.style.transform = "translateX(200%)";
         subheading.style.opacity = "0";
@@ -247,6 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
         aboutHeading.style.opacity = "0";
         aboutContent.style.opacity = "0";
         
+        // Hide deals in section 3 since swiping is only for section 2
         if (isMobile()) {
           recentTransactions.style.transform = "translateX(-100%)";
           deals.style.transform = "translateX(-100%)";
@@ -268,9 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
           contactIntro.style.transform = "translateX(0)";
           contactIntro.style.opacity = "1";
         }
-        
-        // REMOVED: The problematic code that disabled transitions
-        // This was preventing deal swiping in section 3
         break;
     }
   };
@@ -344,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const handleTouchEnd = (event) => {
-    if (isScrolling) return;
+    if (isScrolling || isDealSwiping) return;
     
     const touchEndY = event.changedTouches[0].clientY;
     const touchEndX = event.changedTouches[0].clientX;
@@ -353,13 +351,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaY = touchStartY - touchEndY;
     const deltaX = touchStartX - touchEndX;
     const deltaTime = touchEndTime - touchStartTime;
-    const velocity = Math.abs(deltaY) / deltaTime;
+    const velocityY = Math.abs(deltaY) / deltaTime;
+    const velocityX = Math.abs(deltaX) / deltaTime;
     
-    // Check if we're in section 3 (contact) on mobile and deals are visible
-    if (currentSection === 3 && isMobile()) {
+    // Debug logging (remove in production)
+    console.log('Touch:', { deltaX, deltaY, section: currentSection, isMobile: isMobile() });
+    
+    // Check if we're in section 2 (transactions) on mobile where deals are swipeable
+    if (currentSection === 2 && isMobile()) {
       // Check for horizontal swipe first (for deals)
       if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > TOUCH_THRESHOLD) {
         // Horizontal swipe detected - handle deal navigation
+        console.log('Horizontal swipe detected:', deltaX > 0 ? 'left' : 'right');
         const direction = deltaX > 0 ? 'prev' : 'next';
         updateMobileDeals(direction);
         return;
@@ -369,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Check for vertical swipe (section navigation)
     if (Math.abs(deltaY) > TOUCH_THRESHOLD) {
       // Quick swipe or long swipe
-      if (velocity > 0.3 || Math.abs(deltaY) > 100) {
+      if (velocityY > 0.3 || Math.abs(deltaY) > 100) {
         const direction = deltaY > 0 ? 1 : -1;
         const targetSection = currentSection + direction;
         
@@ -382,8 +385,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleKeydown = (event) => {
     if (isScrolling) return;
     
-    // Handle deal navigation in section 3 on mobile
-    if (currentSection === 3 && isMobile()) {
+    // Handle deal navigation in section 2 on mobile
+    if (currentSection === 2 && isMobile()) {
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
         updateMobileDeals('prev');
