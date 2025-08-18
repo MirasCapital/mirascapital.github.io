@@ -18,19 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalSections = 4;
   const maxDeals = dealElements.length;
   let isDealSwiping = false;
-  let isInitialized = false; // Track initialization state
+  let isInitialized = false;
   
-  // Improved scroll control variables
   let isScrolling = false;
   let scrollAccumulator = 0;
   let lastScrollTime = 0;
   let touchStartY = 0;
   let touchStartTime = 0;
   
-  const SCROLL_THRESHOLD = 50; // Minimum delta to trigger scroll
-  const SCROLL_COOLDOWN = 1200; // Time to wait between scrolls (ms)
-  const TOUCH_THRESHOLD = 30; // Minimum swipe distance
-  const ANIMATION_DURATION = 1000; // Match CSS animation duration
+  const SCROLL_THRESHOLD = 50;
+  const SCROLL_COOLDOWN = 1200;
+  const TOUCH_THRESHOLD = 30;
+  const ANIMATION_DURATION = 1000;
 
   // Form handling
   contactForm?.addEventListener('submit', async (e) => {
@@ -87,18 +86,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const isMobile = () => window.innerWidth <= 767;
 
-  // Fixed initial animation - wait for proper initialization
+  // FIXED: Initial animation - elements start off-screen
   const initializeAnimations = () => {
-    // Ensure all elements start in their initial positions
-    updateSection();
-    
-    // Wait a bit longer and add a check to ensure elements are ready
-    setTimeout(() => {
-      if (heading && subheading && isInitialized) {
+    // Set initial off-screen positions BEFORE the animation
+    if (heading && subheading) {
+      heading.style.transition = "none";
+      subheading.style.transition = "none";
+      heading.style.transform = "translateX(-100%)";
+      subheading.style.transform = "translateX(100%)";
+      
+      // Force reflow
+      heading.offsetHeight;
+      subheading.offsetHeight;
+      
+      // Re-enable transitions
+      heading.style.transition = "";
+      subheading.style.transition = "";
+      
+      // Animate to final position
+      setTimeout(() => {
         heading.style.transform = "translateX(0)";
         subheading.style.transform = "translateX(0)";
-      }
-    }, 800); // Increased delay to ensure proper initialization
+      }, 100);
+    }
   };
 
   const updateMobileDeals = (direction = 'next') => {
@@ -158,13 +168,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 50);
   };
   
-  const updateSection = () => {
+  const updateSection = (skipInitialAnimation = false) => {
     switch(currentSection) {
       case 0:
-        // Home section
-        heading.style.transform = "translateX(0)";
+        // Home section - don't set transform if this is initial load
+        if (!skipInitialAnimation) {
+          heading.style.transform = "translateX(0)";
+          subheading.style.transform = "translateX(0)";
+        }
         heading.style.top = "auto";
-        subheading.style.transform = "translateX(0)";
         subheading.style.opacity = "1";
         backgroundCard.style.transform = "translateY(0)";
         
@@ -354,16 +366,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const velocityY = Math.abs(deltaY) / deltaTime;
     const velocityX = Math.abs(deltaX) / deltaTime;
     
-    // Debug logging (remove in production)
-    console.log('Touch:', { deltaX, deltaY, section: currentSection, isMobile: isMobile() });
-    
     // Check if we're in section 2 (transactions) on mobile where deals are swipeable
     if (currentSection === 2 && isMobile()) {
       // Check for horizontal swipe first (for deals)
       if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > TOUCH_THRESHOLD) {
-        // Horizontal swipe detected - handle deal navigation
-        console.log('Horizontal swipe detected:', deltaX > 0 ? 'left' : 'right');
-        const direction = deltaX > 0 ? 'prev' : 'next';
+        // FIXED: Swipe directions corrected
+        // Swipe left (deltaX > 0) should go to next deal
+        // Swipe right (deltaX < 0) should go to previous deal
+        const direction = deltaX > 0 ? 'next' : 'prev';
         updateMobileDeals(direction);
         return;
       }
@@ -447,6 +457,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // FIXED: Better initialization sequence
   window.scrollTo(0, 0);
   isInitialized = true;
-  updateSection();
-  initializeAnimations();
+  updateSection(true); // Pass true to skip setting initial transforms
+  initializeAnimations(); // This will now animate from off-screen to on-screen
 });
