@@ -125,14 +125,14 @@ export default function Home() {
 
       {/* ── ABOUT ────────────────────────────────────────────────────────── */}
       <section className="px-6 py-28 sm:py-36">
-        <div className="mx-auto max-w-4xl">
-          <div className="mb-10 flex items-center gap-4">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 flex items-center gap-4">
             <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
               About
             </h2>
             <span className="h-px flex-1 bg-white/10" />
           </div>
-          <p className="text-2xl font-light leading-snug text-white/90 sm:text-[2rem]">
+          <p className="max-w-4xl text-2xl font-light leading-snug text-white/90 sm:text-[2rem]">
             An independent advisory and investment firm specialising in mergers
             &amp; acquisitions, capital raisings, industry roll-ups and strategic
             advice across the Australian economy.
@@ -152,7 +152,7 @@ export default function Home() {
         className="scroll-mt-20 bg-navy-deep px-6 py-28 sm:py-32"
       >
         <div className="mx-auto max-w-6xl">
-          <div className="mb-14 flex items-center gap-4">
+          <div className="mb-12 flex items-center gap-4">
             <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
               Recent Transactions
             </h2>
@@ -199,24 +199,26 @@ export default function Home() {
 
       {/* ── CONTACT ──────────────────────────────────────────────────────── */}
       <section id="contact" className="scroll-mt-20 px-6 py-28 sm:py-36">
-        <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-2 md:gap-20">
-          <div>
-            <div className="mb-8 flex items-center gap-4">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
-                Contact
-              </h2>
-              <span className="h-px flex-1 bg-white/10 md:hidden" />
-            </div>
-            <p className="text-3xl font-light leading-snug text-white/90 sm:text-4xl">
-              Your first move shapes the game.
-            </p>
-            <p className="mt-5 max-w-md text-base leading-relaxed text-white/55">
-              Tell us your goals, and together we&apos;ll help you make them
-              happen.
-            </p>
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 flex items-center gap-4">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
+              Contact
+            </h2>
+            <span className="h-px flex-1 bg-white/10" />
           </div>
-          <div>
-            <ContactForm />
+          <div className="grid gap-12 md:grid-cols-2 md:gap-20">
+            <div>
+              <p className="text-3xl font-light leading-snug text-white/90 sm:text-4xl">
+                Your first move shapes the game.
+              </p>
+              <p className="mt-5 max-w-md text-base leading-relaxed text-white/55">
+                Tell us your goals, and together we&apos;ll help you make them
+                happen.
+              </p>
+            </div>
+            <div>
+              <ContactForm />
+            </div>
           </div>
         </div>
       </section>
