@@ -127,7 +127,7 @@ export default function Home() {
       <div
         style={{
           background:
-            "linear-gradient(180deg, #0a1722 0%, #0f1f2f 50%, #0a1722 100%)",
+            "linear-gradient(180deg, #0a1722 0%, #16364f 50%, #0a1722 100%)",
         }}
       >
         {/* ── ABOUT ────────────────────────────────────────────────────────── */}
