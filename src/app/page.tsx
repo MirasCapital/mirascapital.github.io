@@ -1,4 +1,4 @@
-import WaveField from "@/components/WaveField/WaveField"
+import { WaveDots } from "@/components/WaveDots"
 import { ContactForm } from "@/components/ContactForm"
 
 // ── Recent Transactions ──────────────────────────────────────────────────────
@@ -57,11 +57,8 @@ export default function Home() {
             "radial-gradient(ellipse 62% 55% at 50% 16%, #0e4159 0%, #0b2639 40%, #071826 70%, #051019 105%)",
         }}
       >
-        <WaveField
-          posterSrc="/wave-field-poster.png"
-          intensity="balanced"
-          speed="drift"
-          ariaLabel="Animated visualisation of the Miras Capital brand mark"
+        <WaveDots
+          className="absolute inset-0 h-full w-full"
           style={{ position: "absolute", inset: 0 }}
         />
 
