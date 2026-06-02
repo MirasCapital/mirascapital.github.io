@@ -126,34 +126,38 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CONTACT ──────────────────────────────────────────────────────── */}
+      {/* ── CONTACT (+ footer share the closing screen) ──────────────────── */}
+      {/* Sized to one viewport minus the nav so clicking "Contact" lands at the
+          very bottom of the page: the form sits centred in the space and the
+          footer is pinned to the bottom, both visible at once. */}
       <section
         id="contact"
-        className="flex min-h-[100svh] scroll-mt-16 items-center px-6 py-24"
+        className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 flex-col px-6"
       >
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-20">
-          <div>
-            <SectionHeading>Your first move shapes the game.</SectionHeading>
-            <Reveal delay={0.08}>
-              <p className="mt-6 max-w-md text-lg leading-relaxed text-white/60">
-                Tell us your goals, and together we&apos;ll help you make them
-                happen.
-              </p>
-            </Reveal>
-          </div>
-          <div>
-            <ContactForm />
+        <div className="flex flex-1 items-center py-20">
+          <div className="mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-20">
+            <div>
+              <SectionHeading>Your first move shapes the game.</SectionHeading>
+              <Reveal delay={0.08}>
+                <p className="mt-6 max-w-md text-lg leading-relaxed text-white/60">
+                  Tell us your goals, and together we&apos;ll help you make them
+                  happen.
+                </p>
+              </Reveal>
+            </div>
+            <div>
+              <ContactForm />
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/10 px-6 py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-white/45 sm:flex-row">
-          <span>© {new Date().getFullYear()} Miras Capital</span>
-          <span>Independent advisory &amp; investment</span>
-        </div>
-      </footer>
+        <footer className="-mx-6 mt-auto border-t border-white/10 px-6 py-8">
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-white/45 sm:flex-row">
+            <span>© {new Date().getFullYear()} Miras Capital</span>
+            <span>Independent advisory &amp; investment</span>
+          </div>
+        </footer>
+      </section>
       </div>
     </main>
   )
