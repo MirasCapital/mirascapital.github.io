@@ -13,8 +13,7 @@
   --color-mist: #a6a6a6;
 
   --font-display: var(--font-josefin);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  --font-sans: Arial, Helvetica, sans-serif;
 }
 
 :root {

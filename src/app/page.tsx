@@ -127,7 +127,7 @@ export default function Home() {
       <section className="px-6 py-28 sm:py-36">
         <div className="mx-auto max-w-4xl">
           <div className="mb-10 flex items-center gap-4">
-            <h2 className="font-display text-xs font-semibold uppercase tracking-[0.28em] text-orange">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
               About
             </h2>
             <span className="h-px flex-1 bg-white/10" />
@@ -153,7 +153,7 @@ export default function Home() {
       >
         <div className="mx-auto max-w-6xl">
           <div className="mb-14 flex items-center gap-4">
-            <h2 className="font-display text-xs font-semibold uppercase tracking-[0.28em] text-orange">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
               Recent Transactions
             </h2>
             <span className="h-px flex-1 bg-white/10" />
@@ -202,7 +202,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-2 md:gap-20">
           <div>
             <div className="mb-8 flex items-center gap-4">
-              <h2 className="font-display text-xs font-semibold uppercase tracking-[0.28em] text-orange">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
                 Contact
               </h2>
               <span className="h-px flex-1 bg-white/10 md:hidden" />
