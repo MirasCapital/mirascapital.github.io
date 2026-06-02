@@ -50,9 +50,11 @@ export default function Home() {
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section
         className="relative h-[100svh] min-h-[600px] w-full overflow-hidden"
+        // Matches the WebGL scene's own gradient so the canvas fades in
+        // seamlessly over it (no flash before first paint).
         style={{
           background:
-            "radial-gradient(ellipse 55% 50% at 50% 14%, #11506b 0%, #0d2c3f 38%, #091c2b 66%, #06121c 100%)",
+            "radial-gradient(ellipse 62% 55% at 50% 16%, #0e4159 0%, #0b2639 40%, #071826 70%, #051019 105%)",
         }}
       >
         <WaveField

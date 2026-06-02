@@ -185,8 +185,11 @@ export default function WaveField({
       aria-label={ariaLabel}
       role={ariaLabel ? 'img' : undefined}
     >
-      {/* Poster: always rendered. Sits beneath the canvas, fades out once WebGL
-          paints. Acts as the reduced-motion and no-WebGL fallback. */}
+      {/* Poster: shown ONLY for the reduced-motion / no-WebGL fallback. On the
+          live WebGL path it stays hidden — the scene renders its own gradient on
+          frame 1, so the canvas fades in over the matching wrapper background
+          with nothing to "ghost" against. (Cross-fading a frozen poster frame
+          into the live animation caused a first-load twitch.) */}
       <img
         src={posterSrc}
         alt=""
@@ -197,8 +200,8 @@ export default function WaveField({
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          opacity: useFallback ? 1 : canvasReady ? 0 : 1,
-          transition: 'opacity 700ms ease-out',
+          opacity: useFallback ? 1 : 0,
+          transition: 'opacity 300ms ease-out',
           pointerEvents: 'none',
         }}
       />
