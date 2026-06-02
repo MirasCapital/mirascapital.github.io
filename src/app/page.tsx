@@ -1,18 +1,14 @@
 import { FlowField } from "@/components/FlowField"
 import { ContactForm } from "@/components/ContactForm"
+import { TransactionCards, type Deal } from "@/components/TransactionCards"
+import { SectionHeading } from "@/components/SectionHeading"
+import { HeroText } from "@/components/HeroText"
+import { Reveal } from "@/components/Reveal"
+import { SiteNav } from "@/components/SiteNav"
 
 // ── Recent Transactions ──────────────────────────────────────────────────────
 // Rendered as white "tombstone" cards so the client logos read cleanly on the
 // dark page. `counter` is the second party (acquirer/target) where relevant.
-type Deal = {
-  logo: string
-  alt: string
-  type: string
-  counter?: string
-  counterAlt?: string
-  year: string
-}
-
 const transactions: Deal[] = [
   {
     logo: "/Deals/Monarch.png",
@@ -47,14 +43,17 @@ const transactions: Deal[] = [
 export default function Home() {
   return (
     <main className="bg-navy-deep text-white">
+      <SiteNav />
+
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section
+        id="top"
         className="relative h-[100svh] min-h-[600px] w-full overflow-hidden"
         // Matches the WebGL scene's own gradient so the canvas fades in
         // seamlessly over it (no flash before first paint).
         style={{
           background:
-            "radial-gradient(ellipse 62% 55% at 50% 16%, #0e4159 0%, #0b2639 40%, #071826 70%, #051019 105%)",
+            "radial-gradient(ellipse 70% 60% at 64% 26%, #11407a 0%, #08203f 40%, #030c1c 72%, #000014 105%)",
         }}
       >
         <FlowField
@@ -78,54 +77,7 @@ export default function Home() {
         />
 
         <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col px-6">
-          <header className="flex items-center justify-end py-6">
-            <nav className="flex items-center gap-6 text-xs font-medium uppercase tracking-[0.18em] text-white/55">
-              <a
-                href="#about"
-                className="hidden transition-colors hover:text-white sm:inline"
-              >
-                About
-              </a>
-              <a
-                href="#transactions"
-                className="hidden transition-colors hover:text-white sm:inline"
-              >
-                Transactions
-              </a>
-              <a href="#contact" className="transition-colors hover:text-white">
-                Contact
-              </a>
-            </nav>
-          </header>
-
-          <div className="flex flex-1 flex-col justify-center pb-28">
-            <h1
-              translate="no"
-              className="font-display font-bold uppercase leading-[0.95] tracking-[0.02em] text-white"
-              style={{
-                fontSize: "clamp(2.75rem, 9vw, 6rem)",
-                textWrap: "balance",
-                textShadow: "0 2px 48px rgba(0,0,20,0.7)",
-              }}
-            >
-              Miras Capital
-            </h1>
-            <p
-              className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-white/80 sm:text-xl"
-              style={{ textShadow: "0 1px 24px rgba(0,0,20,0.85)" }}
-            >
-              Providing Independent Advice.
-              <br />
-              Investing in Shared Ambitions.
-            </p>
-          </div>
-
-          {/* Scroll cue */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-7 flex justify-center">
-            <span className="text-[0.65rem] font-medium uppercase tracking-[0.3em] text-white/40">
-              Scroll
-            </span>
-          </div>
+          <HeroText />
         </div>
       </section>
 
@@ -139,30 +91,27 @@ export default function Home() {
         {/* ── ABOUT ────────────────────────────────────────────────────────── */}
         <section id="about" className="scroll-mt-20 px-6 py-28 sm:py-36">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex items-center gap-4">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-orange">
-              About
-            </h2>
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-          <div className="max-w-3xl space-y-6 text-lg font-light leading-relaxed text-white/80 sm:text-xl">
-            <p>
+          <SectionHeading className="mb-12">
+            Independent advice, aligned interests.
+          </SectionHeading>
+          <Reveal delay={0.08} className="max-w-3xl space-y-6">
+            <p className="text-xl font-light leading-relaxed text-white/85 sm:text-2xl">
               Miras Capital is an independent advisory and investment firm
               specialising in mergers &amp; acquisitions, capital raisings,
               industry roll-ups and strategic advisory services.
             </p>
-            <p>
+            <p className="text-lg font-light leading-relaxed text-white/65 sm:text-xl">
               We provide comprehensive advice to businesses across various
               sectors of the Australian economy, combining deep industry
               expertise with senior-level attention to deliver exceptional
               outcomes.
             </p>
-            <p>
+            <p className="text-lg font-light leading-relaxed text-white/65 sm:text-xl">
               We prioritise aligned interests, offering flexible fee structures
               that often include equity participation, fostering long-term
               trusted-advisor partnerships.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -172,73 +121,28 @@ export default function Home() {
         className="scroll-mt-20 px-6 py-28 sm:py-32"
       >
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex items-center gap-4">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-orange">
-              Recent Transactions
-            </h2>
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {transactions.map((deal) => (
-              <article
-                key={deal.alt}
-                className="group flex min-h-[300px] flex-col rounded-2xl bg-white p-8 shadow-xl shadow-black/30 ring-1 ring-black/5 transition-transform duration-300 hover:-translate-y-1.5"
-              >
-                <div className="flex flex-1 flex-col items-center justify-center gap-5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={deal.logo}
-                    alt={deal.alt}
-                    className="h-14 w-auto max-w-[160px] object-contain"
-                  />
-                  <span className="text-center text-sm italic text-neutral-500">
-                    {deal.type}
-                  </span>
-                  {deal.counter && (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={deal.counter}
-                        alt={deal.counterAlt}
-                        className="h-12 w-auto max-w-[150px] object-contain"
-                      />
-                    </>
-                  )}
-                </div>
-                <div className="mt-6 flex items-center justify-center">
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-400">
-                    {deal.year}
-                  </span>
-                </div>
-              </article>
-            ))}
-          </div>
+          <SectionHeading className="mb-12">Recent transactions</SectionHeading>
+          <TransactionCards transactions={transactions} />
         </div>
       </section>
 
       {/* ── CONTACT ──────────────────────────────────────────────────────── */}
-      <section id="contact" className="scroll-mt-20 px-6 py-28 sm:py-36">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex items-center gap-4">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-orange">
-              Contact
-            </h2>
-            <span className="h-px flex-1 bg-white/10" />
-          </div>
-          <div className="grid gap-12 md:grid-cols-2 md:gap-20">
-            <div>
-              <p className="text-3xl font-light leading-snug text-white/90 sm:text-4xl">
-                Your first move shapes the game.
-              </p>
-              <p className="mt-5 max-w-md text-base leading-relaxed text-white/55">
+      <section
+        id="contact"
+        className="flex min-h-[100svh] scroll-mt-16 items-center px-6 py-24"
+      >
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-20">
+          <div>
+            <SectionHeading>Your first move shapes the game.</SectionHeading>
+            <Reveal delay={0.08}>
+              <p className="mt-6 max-w-md text-lg leading-relaxed text-white/60">
                 Tell us your goals, and together we&apos;ll help you make them
                 happen.
               </p>
-            </div>
-            <div>
-              <ContactForm />
-            </div>
+            </Reveal>
+          </div>
+          <div>
+            <ContactForm />
           </div>
         </div>
       </section>
@@ -246,13 +150,8 @@ export default function Home() {
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <footer className="border-t border-white/10 px-6 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-xs text-white/45 sm:flex-row">
-          <span className="font-display uppercase tracking-[0.24em] text-white/60">
-            Miras Capital
-          </span>
-          <span>
-            © {new Date().getFullYear()} Miras Capital · Independent advisory
-            &amp; investment
-          </span>
+          <span>© {new Date().getFullYear()} Miras Capital</span>
+          <span>Independent advisory &amp; investment</span>
         </div>
       </footer>
       </div>

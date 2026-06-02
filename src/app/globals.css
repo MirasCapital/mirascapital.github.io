@@ -14,6 +14,12 @@
 
   --font-display: var(--font-josefin);
   --font-sans: Arial, Helvetica, sans-serif;
+
+  /* Strong UI easing curves — the built-in CSS easings lack the punch that
+     makes interactions feel intentional. These override the `ease-out` /
+     `ease-in-out` utilities so every transition shares one source of truth. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 :root {

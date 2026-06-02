@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     url: "https://www.mirascapital.com",
     title: "Miras Capital",
     description:
-      "Independent advisory and investment firm — M&A, capital raisings, industry roll-ups and strategic advice.",
+      "Independent advisory and investment firm. M&A, capital raisings, industry roll-ups and strategic advice.",
     siteName: "Miras Capital",
   },
 }

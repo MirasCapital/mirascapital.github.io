@@ -6,9 +6,10 @@ import { useEffect, useRef } from "react"
  * FlowField — smooth flowing-liquid hero for the Miras site.
  *
  * This is the tools-site `shader-background.tsx` flow (domain-warped fBm,
- * organic liquid) recoloured to the brand: deep navy base → molten orange →
- * warm gold highlights. Full-bleed; the page applies scrims so the wordmark
- * sits over darkness on the left while the flow stays vivid on the right.
+ * organic liquid), sharing its palette: deep-space navy base → Apple blue →
+ * cyan highlights, so mirascapital.com and the tools site read as one brand.
+ * Full-bleed; the page applies scrims so the wordmark sits over darkness on
+ * the left while the flow stays vivid on the right.
  *
  * Honors prefers-reduced-motion (single static frame) and pauses when the tab
  * is hidden or the hero scrolls out of view.
@@ -37,10 +38,9 @@ uniform float u_chroma;
 uniform float u_grain;
 uniform float u_bright;
 uniform float u_sat;
-uniform vec3  u_c1; // warm highlight
-uniform vec3  u_c2; // molten orange
-uniform vec3  u_c3; // deep navy base
-uniform vec3  u_teal; // cool accent
+uniform vec3  u_c1; // cyan highlight
+uniform vec3  u_c2; // Apple blue
+uniform vec3  u_c3; // deep-space navy base
 
 vec3 mod289(vec3 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec2 mod289(vec2 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -98,18 +98,11 @@ void main() {
 
   float e = mix(0.04, 0.26, u_soft);
   vec3 col = u_c3;
-  col = mix(col, u_c2, smoothstep(0.30 - e, 0.62 + e, n));
-  col = mix(col, u_c1, smoothstep(0.66 - e, 0.95 + e, n + 0.15 * r.x));
+  col = mix(col, u_c2, smoothstep(0.22 - e, 0.55 + e, n));
+  col = mix(col, u_c1, smoothstep(0.62 - e, 0.92 + e, n + 0.15 * r.x));
 
-  // Touch of teal: cool veins threaded through the mid-tones, driven by the
-  // secondary warp field so they stay sparse and never reach the orange ridges.
-  float teal = smoothstep(0.55, 0.86, r.y)
-             * smoothstep(0.20, 0.44, n)
-             * (1.0 - smoothstep(0.56, 0.80, n));
-  col = mix(col, u_teal, teal * 0.42);
-
-  // Warm edge glow on the brightest ridges.
-  float edge = smoothstep(0.62, 0.97, n);
+  // Cyan edge glow on the brightest ridges.
+  float edge = smoothstep(0.6, 0.95, n);
   col += u_chroma * edge * u_c1;
 
   // Tone.
@@ -183,19 +176,19 @@ export function FlowField({
     const uTime = u("u_time")
     const uRes = u("u_res")
 
-    // Warm brand palette + tone (navy → molten orange → gold).
-    gl.uniform1f(u("u_scale"), 1.3)
+    // Miras-tools palette + tone (deep-space navy → Apple blue → cyan highlight).
+    // Matched to the tools home page so the two sites read as one brand.
+    gl.uniform1f(u("u_scale"), 1.35)
     gl.uniform1f(u("u_amp"), 0.95)
-    gl.uniform1f(u("u_warp"), 1.6)
-    gl.uniform1f(u("u_soft"), 0.6)
-    gl.uniform1f(u("u_chroma"), 0.14)
-    gl.uniform1f(u("u_grain"), 0.035)
-    gl.uniform1f(u("u_bright"), -0.06)
-    gl.uniform1f(u("u_sat"), 0.1)
-    gl.uniform3fv(u("u_c1"), hex("#f7a23a")) // warm orange highlight
-    gl.uniform3fv(u("u_c2"), hex("#e0781b")) // molten orange
-    gl.uniform3fv(u("u_c3"), hex("#0a1722")) // deep navy base
-    gl.uniform3fv(u("u_teal"), hex("#0e9ec6")) // cool teal accent
+    gl.uniform1f(u("u_warp"), 1.5)
+    gl.uniform1f(u("u_soft"), 0.62)
+    gl.uniform1f(u("u_chroma"), 0.1)
+    gl.uniform1f(u("u_grain"), 0.045)
+    gl.uniform1f(u("u_bright"), -0.1)
+    gl.uniform1f(u("u_sat"), -0.05)
+    gl.uniform3fv(u("u_c1"), hex("#8cd6d9")) // cyan highlight
+    gl.uniform3fv(u("u_c2"), hex("#2997ff")) // Apple blue
+    gl.uniform3fv(u("u_c3"), hex("#000014")) // deep-space navy base
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
