@@ -37,9 +37,10 @@ uniform float u_chroma;
 uniform float u_grain;
 uniform float u_bright;
 uniform float u_sat;
-uniform vec3  u_c1; // warm gold highlight
+uniform vec3  u_c1; // warm highlight
 uniform vec3  u_c2; // molten orange
 uniform vec3  u_c3; // deep navy base
+uniform vec3  u_teal; // cool accent
 
 vec3 mod289(vec3 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec2 mod289(vec2 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -99,6 +100,13 @@ void main() {
   vec3 col = u_c3;
   col = mix(col, u_c2, smoothstep(0.30 - e, 0.62 + e, n));
   col = mix(col, u_c1, smoothstep(0.66 - e, 0.95 + e, n + 0.15 * r.x));
+
+  // Touch of teal: cool veins threaded through the mid-tones, driven by the
+  // secondary warp field so they stay sparse and never reach the orange ridges.
+  float teal = smoothstep(0.55, 0.86, r.y)
+             * smoothstep(0.20, 0.44, n)
+             * (1.0 - smoothstep(0.56, 0.80, n));
+  col = mix(col, u_teal, teal * 0.42);
 
   // Warm edge glow on the brightest ridges.
   float edge = smoothstep(0.62, 0.97, n);
@@ -180,13 +188,14 @@ export function WaveDots({
     gl.uniform1f(u("u_amp"), 0.95)
     gl.uniform1f(u("u_warp"), 1.6)
     gl.uniform1f(u("u_soft"), 0.6)
-    gl.uniform1f(u("u_chroma"), 0.12)
+    gl.uniform1f(u("u_chroma"), 0.14)
     gl.uniform1f(u("u_grain"), 0.035)
     gl.uniform1f(u("u_bright"), -0.06)
-    gl.uniform1f(u("u_sat"), 0.06)
-    gl.uniform3fv(u("u_c1"), hex("#f0cb7e")) // gold highlight
-    gl.uniform3fv(u("u_c2"), hex("#cc8a2c")) // molten orange
+    gl.uniform1f(u("u_sat"), 0.1)
+    gl.uniform3fv(u("u_c1"), hex("#f7a23a")) // warm orange highlight
+    gl.uniform3fv(u("u_c2"), hex("#e0781b")) // molten orange
     gl.uniform3fv(u("u_c3"), hex("#0a1722")) // deep navy base
+    gl.uniform3fv(u("u_teal"), hex("#0e9ec6")) // cool teal accent
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
