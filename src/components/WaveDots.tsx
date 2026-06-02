@@ -3,16 +3,15 @@
 import { useEffect, useRef } from "react"
 
 /**
- * WaveDots — procedural dotted wave field for the Miras hero.
+ * WaveDots — smooth flowing-liquid hero for the Miras site.
  *
- * Bootstrapped from the tools-site `shader-background.tsx` (dependency-free raw
- * WebGL, domain-warped fBm). Evolved here into the brand cover-art look: rows of
- * glowing orange/teal dots flowing in waves across the lower frame, a calm dark
- * centre valley, and a navy→teal sky — ALL rendered in a single fullscreen
- * fragment shader, so any frame is the complete picture.
+ * This is the tools-site `shader-background.tsx` flow (domain-warped fBm,
+ * organic liquid) recoloured to the brand: deep navy base → molten orange →
+ * warm gold highlights. Full-bleed; the page applies scrims so the wordmark
+ * sits over darkness on the left while the flow stays vivid on the right.
  *
- * Honors prefers-reduced-motion (renders one static frame) and pauses when the
- * tab is hidden or the hero scrolls out of view.
+ * Honors prefers-reduced-motion (single static frame) and pauses when the tab
+ * is hidden or the hero scrolls out of view.
  */
 
 const VERT = `
@@ -31,15 +30,17 @@ varying vec2 vUv;
 uniform float u_time;
 uniform vec2  u_res;
 uniform float u_scale;
+uniform float u_amp;
 uniform float u_warp;
-uniform float u_stretch;
-uniform float u_speed;
+uniform float u_soft;
 uniform float u_chroma;
-uniform vec3  u_orange;
-uniform vec3  u_gold;
-uniform vec3  u_teal;
+uniform float u_grain;
+uniform float u_bright;
+uniform float u_sat;
+uniform vec3  u_c1; // warm gold highlight
+uniform vec3  u_c2; // molten orange
+uniform vec3  u_c3; // deep navy base
 
-// ── simplex noise + fBm (from the tools-site shader) ────────────────────────
 vec3 mod289(vec3 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec2 mod289(vec2 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec3 permute(vec3 x){ return mod289(((x * 34.0) + 1.0) * x); }
@@ -79,88 +80,38 @@ float fbm(vec2 p) {
   return s;
 }
 
-// Domain-warped flow field → returns value in [0,1], plus the warp vector.
-float flow(vec2 p, out vec2 warpv) {
-  float t = u_time * 0.08;
-  vec2 q = vec2(fbm(p + vec2(0.0, t)), fbm(p + vec2(5.2, 1.3) - t));
-  vec2 r = vec2(fbm(p + u_warp * 4.0 * q + vec2(1.7, 9.2)),
-                fbm(p + u_warp * 4.0 * q + vec2(8.3, 2.8)));
-  warpv = r;
-  float n = fbm(p + u_warp * 4.0 * r);
-  return clamp(n * 0.5 + 0.5, 0.0, 1.0);
-}
-
-// Background sky: navy base with a soft teal glow near the top-centre.
-vec3 sky(vec2 uv) {
-  vec2 d = uv - vec2(0.5, 0.84);
-  float r = length(vec2(d.x / 0.62, d.y / 0.55));
-  vec3 teal = vec3(0.055, 0.255, 0.355);
-  vec3 mid  = vec3(0.043, 0.150, 0.223);
-  vec3 navy = vec3(0.028, 0.094, 0.149);
-  vec3 deep = vec3(0.020, 0.060, 0.098);
-  vec3 c = mix(teal, mid, smoothstep(0.0, 0.40, r));
-  c = mix(c, navy, smoothstep(0.40, 0.70, r));
-  c = mix(c, deep, smoothstep(0.70, 1.05, r));
-  return c;
-}
-
 void main() {
-  vec2 uv = vUv;
-  float aspect = u_res.x / u_res.y;
+  vec2 p = (vUv - 0.5);
+  p.x *= u_res.x / u_res.y;
+  p *= u_scale;
 
-  // Flow field in stretched field-space; drifts over time.
-  vec2 fp = vec2((uv.x - 0.5) * aspect, uv.y) * u_scale;
-  fp.x *= (1.0 - 0.5 * u_stretch);
-  vec2 wv;
-  float n = flow(fp + vec2(0.0, -u_time * u_speed), wv);
-  float warpAmt = (n - 0.5) * 2.0;
+  float t = u_time;
 
-  // Composition envelopes.
-  float cd = abs(uv.x - 0.5);                       // distance from centre
-  float calm = smoothstep(0.05, 0.24, cd);          // narrow dark centre valley
-  float lower = smoothstep(0.60, -0.05, uv.y);      // energy in the lower frame
-  float env = lower * calm;
+  // Two-pass domain warp → organic, liquid flow.
+  vec2 q = vec2(fbm(p + vec2(0.0, t * 0.10)),
+                fbm(p + vec2(5.2, 1.3) - t * 0.12));
+  vec2 r = vec2(fbm(p + u_warp * q + vec2(1.7, 9.2) + t * 0.08),
+                fbm(p + u_warp * q + vec2(8.3, 2.8) - t * 0.09));
+  float n = fbm(p + u_warp * r);
+  n = clamp(n * u_amp + 0.5, 0.0, 1.0);
 
-  // Warped wave height — a low-frequency wave folded by the domain-warp field.
-  // It is a function of x only (per column), so every row shares it and the
-  // rows move together as PARALLEL flowing lines (the cover-art look). Kept
-  // smooth (low warp jitter) for elegant sweeping curves.
-  float waveH = sin(uv.x * 6.2831 * 1.4 + warpAmt * 2.2 + wv.x * 1.0) * 0.55
-              + warpAmt * 0.7;
-  float amp = 0.065 * lower * (0.6 + 0.8 * calm);
-  float yy = uv.y + waveH * amp;
+  float e = mix(0.04, 0.26, u_soft);
+  vec3 col = u_c3;
+  col = mix(col, u_c2, smoothstep(0.30 - e, 0.62 + e, n));
+  col = mix(col, u_c1, smoothstep(0.66 - e, 0.95 + e, n + 0.15 * r.x));
 
-  // Dot lattice on the displaced rows. Per-row x offset staggers the dots so
-  // it reads as flowing lines of dots, not a rigid grid. Dots grow toward the
-  // foreground (bottom) for depth.
-  float rows = 18.0;
-  float cols = 130.0;
-  float ry = yy * rows;
-  float rowCell = fract(ry) - 0.5;
-  float cx = fract(uv.x * cols + floor(ry) * 0.37) - 0.5;
-  float dd = sqrt(rowCell * rowCell * 1.15 + cx * cx);
-  float sz = 0.32 + 0.16 * lower;
-  float core = smoothstep(sz, 0.0, dd);
-  float halo = smoothstep(sz + 0.26, sz - 0.18, dd) * 0.42;   // wide halo = glow
-  float dotv = core + halo;
+  // Warm edge glow on the brightest ridges.
+  float edge = smoothstep(0.62, 0.97, n);
+  col += u_chroma * edge * u_c1;
 
-  // Brightness along the lines, modulated by the flow crest.
-  float crest = smoothstep(0.30, 0.92, n + 0.12 * calm);
-  float bright = dotv * env * (0.5 + 0.85 * crest);
+  // Tone.
+  col += u_bright;
+  float l = dot(col, vec3(0.299, 0.587, 0.114));
+  col = mix(vec3(l), col, 1.0 + u_sat);
 
-  // Color.
-  vec3 col = sky(uv);
-  vec3 warm = mix(u_gold, u_orange, smoothstep(0.20, 1.0, crest));
-  col += warm * bright * 2.7;
-
-  // Rare teal accent dots.
-  float rnd = fract(sin(dot(floor(vec2(uv.x * cols, ry)),
-                          vec2(12.9898, 78.233))) * 43758.5453);
-  float tealKey = step(0.87, rnd) * dotv * env * (0.4 + 0.6 * calm);
-  col += u_teal * tealKey * 1.0;
-
-  // Saturation/chroma lift on the brightest dots.
-  col += u_chroma * bright * u_orange * 2.0;
+  // Subtle grain for texture.
+  float g = fract(sin(dot(vUv * u_res + t, vec2(12.9898, 78.233))) * 43758.5453);
+  col += (g - 0.5) * u_grain;
 
   gl_FragColor = vec4(max(col, 0.0), 1.0);
 }
@@ -224,15 +175,18 @@ export function WaveDots({
     const uTime = u("u_time")
     const uRes = u("u_res")
 
-    // Look params (baseline from the supplied shader config, retuned for dots).
-    gl.uniform1f(u("u_scale"), 0.95)
-    gl.uniform1f(u("u_warp"), 0.3)
-    gl.uniform1f(u("u_stretch"), 0.45)
-    gl.uniform1f(u("u_speed"), 0.06)
-    gl.uniform1f(u("u_chroma"), 0.05)
-    gl.uniform3fv(u("u_orange"), hex("#f5a531"))
-    gl.uniform3fv(u("u_gold"), hex("#caa45d"))
-    gl.uniform3fv(u("u_teal"), hex("#1fb6d6"))
+    // Warm brand palette + tone (navy → molten orange → gold).
+    gl.uniform1f(u("u_scale"), 1.3)
+    gl.uniform1f(u("u_amp"), 0.95)
+    gl.uniform1f(u("u_warp"), 1.6)
+    gl.uniform1f(u("u_soft"), 0.6)
+    gl.uniform1f(u("u_chroma"), 0.12)
+    gl.uniform1f(u("u_grain"), 0.035)
+    gl.uniform1f(u("u_bright"), -0.06)
+    gl.uniform1f(u("u_sat"), 0.06)
+    gl.uniform3fv(u("u_c1"), hex("#f0cb7e")) // gold highlight
+    gl.uniform3fv(u("u_c2"), hex("#cc8a2c")) // molten orange
+    gl.uniform3fv(u("u_c3"), hex("#0a1722")) // deep navy base
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
@@ -253,7 +207,7 @@ export function WaveDots({
     const start = performance.now()
     const render = (now: number) => {
       resize()
-      const t = reduced ? 12 : (now - start) / 1000
+      const t = reduced ? 14 : ((now - start) / 1000) * 0.16
       gl.uniform1f(uTime, t)
       gl.drawArrays(gl.TRIANGLES, 0, 3)
       if (!reduced && running) raf = requestAnimationFrame(render)
@@ -268,7 +222,6 @@ export function WaveDots({
     }
     document.addEventListener("visibilitychange", onVisibility)
 
-    // Pause when the hero scrolls out of view.
     const io = new IntersectionObserver(
       ([entry]) => {
         running = entry.isIntersecting

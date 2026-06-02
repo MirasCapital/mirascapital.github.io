@@ -62,14 +62,19 @@ export default function Home() {
           style={{ position: "absolute", inset: 0 }}
         />
 
-        {/* Legibility scrims — keep text readable while the field stays vivid */}
+        {/* Legibility scrims — text sits over darkness on the left/bottom while
+            the flow stays vivid on the right (matches the tools-site layout). */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/65 via-transparent to-navy/90"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy via-navy/75 to-transparent"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-navy/70 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-navy to-transparent"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-navy/80 to-transparent"
         />
 
         <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col px-6">
