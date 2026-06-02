@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 
 /**
- * WaveDots — smooth flowing-liquid hero for the Miras site.
+ * FlowField — smooth flowing-liquid hero for the Miras site.
  *
  * This is the tools-site `shader-background.tsx` flow (domain-warped fBm,
  * organic liquid) recoloured to the brand: deep navy base → molten orange →
@@ -143,7 +143,7 @@ const hex = (h: string): [number, number, number] => {
   return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]
 }
 
-export function WaveDots({
+export function FlowField({
   className,
   style,
 }: {
