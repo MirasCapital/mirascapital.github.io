@@ -46,7 +46,7 @@ const transactions: Deal[] = [
 
 export default function Home() {
   return (
-    <main className="bg-navy text-white">
+    <main className="bg-navy-deep text-white">
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section
         className="relative h-[100svh] min-h-[600px] w-full overflow-hidden"
@@ -70,7 +70,7 @@ export default function Home() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-navy to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-navy-deep to-transparent"
         />
         <div
           aria-hidden
@@ -123,8 +123,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── ABOUT ────────────────────────────────────────────────────────── */}
-      <section className="px-6 py-28 sm:py-36">
+      {/* Sections flow dark navy → navy → dark navy down the page. */}
+      <div
+        style={{
+          background:
+            "linear-gradient(180deg, #0a1722 0%, #0f1f2f 50%, #0a1722 100%)",
+        }}
+      >
+        {/* ── ABOUT ────────────────────────────────────────────────────────── */}
+        <section className="px-6 py-28 sm:py-36">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 flex items-center gap-4">
             <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
@@ -149,7 +156,7 @@ export default function Home() {
       {/* ── RECENT TRANSACTIONS ──────────────────────────────────────────── */}
       <section
         id="transactions"
-        className="scroll-mt-20 bg-navy-deep px-6 py-28 sm:py-32"
+        className="scroll-mt-20 px-6 py-28 sm:py-32"
       >
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 flex items-center gap-4">
@@ -235,6 +242,7 @@ export default function Home() {
           </span>
         </div>
       </footer>
+      </div>
     </main>
   )
 }
