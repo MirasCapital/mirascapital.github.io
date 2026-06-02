@@ -78,10 +78,7 @@ export default function Home() {
         />
 
         <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col px-6">
-          <header className="flex items-center justify-between py-6">
-            <span className="font-display text-sm font-semibold uppercase tracking-[0.28em] text-white/85">
-              Miras Capital
-            </span>
+          <header className="flex items-center justify-end py-6">
             <nav className="flex items-center gap-6 text-xs font-medium uppercase tracking-[0.18em] text-white/55">
               <a
                 href="#transactions"
@@ -98,7 +95,7 @@ export default function Home() {
           <div className="flex flex-1 flex-col justify-center pb-28">
             <h1
               translate="no"
-              className="font-display font-bold uppercase leading-[0.95] tracking-[0.1em] text-white"
+              className="font-display font-bold uppercase leading-[0.95] tracking-[0.02em] text-white"
               style={{
                 fontSize: "clamp(2.75rem, 9vw, 6rem)",
                 textWrap: "balance",
