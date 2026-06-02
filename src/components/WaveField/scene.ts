@@ -55,10 +55,19 @@ export function createScene(
   gl.clearColor(0, 0, 0, 0);
 
   const camera = new Camera(gl, { fov: 55, near: 0.1, far: 250 });
-  camera.position.set(0, 3.5, 0);
-  camera.lookAt([0, 0.4, -25]);
+  // Raised and tilted down so the wave plane sits in the lower frame, leaving a
+  // calm dark "sky" above for the wordmark (matches the reference composition).
+  camera.position.set(0, 6.5, 4.0);
+  camera.lookAt([0, -1.0, -30]);
 
   const scene = new Transform();
+
+  // ─── Background gradient ─────────────────────────────────────────────────
+  // Fullscreen, opaque, drawn first (renderOrder < 0). Part of the scene so it
+  // lands in the bloom's offscreen target and every captured frame is complete.
+
+  const gradient = buildGradient(gl);
+  gradient.setParent(scene);
 
   // ─── Wave surface ────────────────────────────────────────────────────────
 
@@ -83,7 +92,12 @@ export function createScene(
   let prevHeight = 0;
 
   function resize(): void {
-    const rect = canvas.getBoundingClientRect();
+    // Measure the wrapper, not the canvas: OGL's Renderer writes pixel
+    // width/height onto canvas.style, so measuring the canvas would read back
+    // its own last-set size (a feedback loop that locks it at the 300x150
+    // default). The parent holds the true full-bleed layout size.
+    const sizeEl = canvas.parentElement ?? canvas;
+    const rect = sizeEl.getBoundingClientRect();
     const w = Math.max(1, Math.floor(rect.width));
     const h = Math.max(1, Math.floor(rect.height));
     if (w === prevWidth && h === prevHeight) return;
@@ -165,6 +179,30 @@ export function createScene(
   };
 }
 
+// ─── Background gradient builder ────────────────────────────────────────────
+// A fullscreen triangle that ignores the camera (clip-space positions) and
+// paints the navy→teal atmosphere. Opaque, depth-off, renderOrder -10 so it is
+// always drawn behind the additive dots.
+
+function buildGradient(gl: OGLRenderingContext): Mesh {
+  const geometry = new Geometry(gl, {
+    position: { size: 2, data: new Float32Array([-1, -1, 3, -1, -1, 3]) },
+    uv: { size: 2, data: new Float32Array([0, 0, 2, 0, 0, 2]) },
+  });
+
+  const program = new Program(gl, {
+    vertex: Shaders.fullscreenVertex,
+    fragment: Shaders.gradientFragment,
+    depthTest: false,
+    depthWrite: false,
+  });
+
+  const mesh = new Mesh(gl, { geometry, program });
+  mesh.frustumCulled = false;
+  mesh.renderOrder = -10;
+  return mesh;
+}
+
 // ─── Wave surface builder ───────────────────────────────────────────────────
 
 interface SurfaceData {
@@ -176,9 +214,10 @@ function buildSurface(
   gl: OGLRenderingContext,
   config: WaveFieldConfig,
 ): SurfaceData {
-  // Grid sized so that total ≈ particleCount, with wider x than z (matches the
-  // landscape aspect we look down).
-  const xCells = Math.ceil(Math.sqrt(config.particleCount * 2.5));
+  // Grid sized so that total ≈ particleCount, with many more x cells than z.
+  // Dense rows + spaced rows = each row reads as a crisp flowing line (the look
+  // of the reference), rather than an isotropic scatter.
+  const xCells = Math.ceil(Math.sqrt(config.particleCount * 5.0));
   const zCells = Math.ceil(config.particleCount / xCells);
   const N = xCells * zCells;
 
@@ -193,35 +232,36 @@ function buildSurface(
   let i = 0;
   for (let zi = 0; zi < zCells; zi++) {
     for (let xi = 0; xi < xCells; xi++) {
-      const x = (xi / (xCells - 1) - 0.5) * xRange + (Math.random() - 0.5) * 0.18;
+      const x = (xi / (xCells - 1) - 0.5) * xRange + (Math.random() - 0.5) * 0.06;
       const z = -1.0 - (zi / (zCells - 1)) * zRange;
       positions[i * 3] = x;
       positions[i * 3 + 1] = 0;
       positions[i * 3 + 2] = z;
       seeds[i] = Math.random();
-      sizes[i] = 0.6 + Math.random() * 0.7;
+      sizes[i] = 0.65 + Math.random() * 0.75;
 
       const ax = Math.abs(x);
       const edge = ax / 40;
       const r = Math.random();
 
-      if (edge > 0.13 && r < 0.82) {
-        // Bright orange (the wave-band dots)
-        const b = 0.92 + Math.random() * 0.08;
+      if (edge > 0.1 && r < 0.86) {
+        // Bright molten orange (the wave-band dots) — warm gold, low blue
+        const b = 0.94 + Math.random() * 0.06;
         colors[i * 3] = b;
-        colors[i * 3 + 1] = b * (0.48 + Math.random() * 0.18);
-        colors[i * 3 + 2] = b * 0.08;
-      } else if (r < 0.94) {
-        // Dim amber (the off-band dots)
-        const dim = 0.48 + Math.random() * 0.3;
-        colors[i * 3] = dim * 1.2;
-        colors[i * 3 + 1] = dim * 0.5;
-        colors[i * 3 + 2] = dim * 0.08;
+        colors[i * 3 + 1] = b * (0.39 + Math.random() * 0.13);
+        colors[i * 3 + 2] = b * 0.05;
+      } else if (r < 0.965) {
+        // Dim amber (the off-band fill) — brighter than before so the field
+        // keeps a warm body instead of going to scattered specks
+        const dim = 0.55 + Math.random() * 0.32;
+        colors[i * 3] = dim * 1.25;
+        colors[i * 3 + 1] = dim * 0.45;
+        colors[i * 3 + 2] = dim * 0.06;
       } else {
-        // Teal accent (rare)
-        colors[i * 3] = 0.16 + Math.random() * 0.1;
-        colors[i * 3 + 1] = 0.66 + Math.random() * 0.12;
-        colors[i * 3 + 2] = 0.88;
+        // Teal accent (rare — ~3.5%)
+        colors[i * 3] = 0.14 + Math.random() * 0.1;
+        colors[i * 3 + 1] = 0.62 + Math.random() * 0.14;
+        colors[i * 3 + 2] = 0.86;
       }
       i++;
     }
@@ -301,13 +341,22 @@ function buildStreaks(
     instancePos[i * 3 + 1] = 0;
     instancePos[i * 3 + 2] = zBase;
 
-    instanceHeight[i] = 3 + Math.random() * 5;
+    instanceHeight[i] = 5 + Math.random() * 9;
     instanceSeed[i] = Math.random();
 
     const b = 0.85 + Math.random() * 0.15;
-    instanceColor[i * 3] = b;
-    instanceColor[i * 3 + 1] = b * (0.52 + Math.random() * 0.22);
-    instanceColor[i * 3 + 2] = b * 0.12;
+    if (Math.random() < 0.3) {
+      // Teal streaks — the cool vertical lights mixed in on the right of the
+      // reference, balancing the orange.
+      instanceColor[i * 3] = b * 0.18;
+      instanceColor[i * 3 + 1] = b * 0.7;
+      instanceColor[i * 3 + 2] = b * 0.92;
+    } else {
+      // Warm orange streaks
+      instanceColor[i * 3] = b;
+      instanceColor[i * 3 + 1] = b * (0.5 + Math.random() * 0.2);
+      instanceColor[i * 3 + 2] = b * 0.1;
+    }
   }
 
   const geometry = new Geometry(gl, {

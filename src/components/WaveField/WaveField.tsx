@@ -50,7 +50,7 @@ interface IntensityPreset {
 
 const INTENSITY_MAP: Record<WaveFieldIntensity, IntensityPreset> = {
   subtle:     { intensity: 0.7, particleCount: 8000,  streakCount: 40,  bloomStrength: 0.8, bloomThreshold: 0.35 },
-  balanced:   { intensity: 1.0, particleCount: 14000, streakCount: 75,  bloomStrength: 1.2, bloomThreshold: 0.25 },
+  balanced:   { intensity: 1.1, particleCount: 18000, streakCount: 110, bloomStrength: 1.8, bloomThreshold: 0.32 },
   pronounced: { intensity: 1.3, particleCount: 20000, streakCount: 120, bloomStrength: 1.6, bloomThreshold: 0.18 },
 };
 

@@ -31,19 +31,22 @@ export const surfaceVertex = /* glsl */ `
     pos.z = mod(pos.z + u_time * u_speed, zR) - zR;
 
     // Wave displacement: calm centre, amplitude grows toward edges
-    float edge = max(0.0, abs(pos.x) - 4.5);
-    float amp = min(edge * 0.25 * u_intensity, 5.2);
+    float edge = max(0.0, abs(pos.x) - 8.5);
+    float amp = min(edge * 0.30 * u_intensity, 6.5);
 
-    float w1 = sin(pos.x * 0.18 + pos.z * 0.07 + u_time * 0.30) * amp;
-    float w2 = sin(pos.x * 0.34 - u_time * 0.18) * amp * 0.32;
-    float w3 = cos(pos.z * 0.11 + u_time * 0.22 + aSeed * 6.28) * 0.35;
+    // w1/w2 are coherent per-row (functions of x,z only) so dots read as smooth
+    // flowing lines, not scatter. w3 is a small spatial ripple — NOT keyed to
+    // aSeed, which would jitter each dot independently and break the line.
+    float w1 = sin(pos.x * 0.16 + pos.z * 0.06 + u_time * 0.30) * amp;
+    float w2 = sin(pos.x * 0.30 - u_time * 0.18) * amp * 0.30;
+    float w3 = cos(pos.z * 0.13 + u_time * 0.22) * 0.45;
     pos.y += w1 + w2 + w3;
 
     vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mvPos;
 
     float dist = length(mvPos.xyz);
-    gl_PointSize = aSize * 4.5 * (38.0 / dist) * u_pr;
+    gl_PointSize = aSize * 5.5 * (38.0 / dist) * u_pr;
 
     vColor = aColor;
     vDist = -mvPos.z;
@@ -71,10 +74,15 @@ export const surfaceFragment = /* glsl */ `
     float alpha = core + inner + outer;
 
     float nearFade = smoothstep(0.5, 5.0, vDist);
-    float farFade  = 1.0 - smoothstep(85.0, 110.0, vDist);
+    float farFade  = 1.0 - smoothstep(52.0, 92.0, vDist);
     float boost    = 1.0 + smoothstep(0.0, 18.0, vAmp) * 0.45;
 
-    gl_FragColor = vec4(vColor * boost * 1.20, alpha * nearFade * farFade);
+    // Center fade: the calm centre (amp ~0) drops to near-dark so the middle
+    // reads as an empty valley between the two corner wave systems — instead of
+    // a flat band of dots crossing behind the wordmark.
+    float centerFade = 0.10 + 0.90 * smoothstep(0.0, 2.2, vAmp);
+
+    gl_FragColor = vec4(vColor * boost * 1.5, alpha * nearFade * farFade * centerFade);
   }
 `;
 
@@ -103,7 +111,7 @@ export const streakVertex = /* glsl */ `
   void main() {
     // Stretch the unit quad: thin in x, tall in y per instance
     vec3 quadVertex = position;
-    quadVertex.x *= 0.06;
+    quadVertex.x *= 0.045;
     quadVertex.y *= instanceHeight;
 
     // Animate the streak rising over time. Each instance has its own phase
@@ -148,7 +156,7 @@ export const streakFragment = /* glsl */ `
     float distFade = 1.0 - smoothstep(60.0, 90.0, vDist);
 
     float alpha = intensity * horiz * topFade * botFade * distFade;
-    gl_FragColor = vec4(vColor * 1.3, alpha);
+    gl_FragColor = vec4(vColor * 1.9, alpha);
   }
 `;
 
@@ -165,6 +173,34 @@ export const fullscreenVertex = /* glsl */ `
   void main() {
     vUv = uv;
     gl_Position = vec4(position, 0.0, 1.0);
+  }
+`;
+
+// ─── Background gradient (drawn first, inside the scene) ─────────────────────
+// Renders the deep-navy → teal radial atmosphere AS PART OF the WebGL scene, so
+// the canvas is self-contained: a screenshot of any frame includes the gradient,
+// waves, streaks and bloom together. Kept dark enough that the bloom threshold
+// never picks it up — only the dots glow.
+export const gradientFragment = /* glsl */ `
+  precision highp float;
+  varying vec2 vUv;
+
+  void main() {
+    // Elliptical radial falloff centred near the top-middle.
+    // (uv.y is 0 at the bottom of the canvas, 1 at the top.)
+    vec2 d = vUv - vec2(0.5, 0.84);
+    float r = length(vec2(d.x / 0.62, d.y / 0.55));
+
+    vec3 teal = vec3(0.055, 0.255, 0.355); // glow core (kept below bloom thresh)
+    vec3 mid  = vec3(0.043, 0.150, 0.223);
+    vec3 navy = vec3(0.028, 0.094, 0.149);
+    vec3 deep = vec3(0.020, 0.060, 0.098); // dark corners
+
+    vec3 col = mix(teal, mid, smoothstep(0.0, 0.40, r));
+    col = mix(col, navy, smoothstep(0.40, 0.70, r));
+    col = mix(col, deep, smoothstep(0.70, 1.05, r));
+
+    gl_FragColor = vec4(col, 1.0);
   }
 `;
 

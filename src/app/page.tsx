@@ -52,7 +52,7 @@ export default function Home() {
         className="relative h-[100svh] min-h-[600px] w-full overflow-hidden"
         style={{
           background:
-            "radial-gradient(ellipse 75% 60% at 50% 20%, #123a4f 0%, #0f1f2f 52%, #0a1722 100%)",
+            "radial-gradient(ellipse 55% 50% at 50% 14%, #11506b 0%, #0d2c3f 38%, #091c2b 66%, #06121c 100%)",
         }}
       >
         <WaveField
