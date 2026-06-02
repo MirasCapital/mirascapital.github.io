@@ -81,6 +81,12 @@ export default function Home() {
           <header className="flex items-center justify-end py-6">
             <nav className="flex items-center gap-6 text-xs font-medium uppercase tracking-[0.18em] text-white/55">
               <a
+                href="#about"
+                className="hidden transition-colors hover:text-white sm:inline"
+              >
+                About
+              </a>
+              <a
                 href="#transactions"
                 className="hidden transition-colors hover:text-white sm:inline"
               >
@@ -131,7 +137,7 @@ export default function Home() {
         }}
       >
         {/* ── ABOUT ────────────────────────────────────────────────────────── */}
-        <section className="px-6 py-28 sm:py-36">
+        <section id="about" className="scroll-mt-20 px-6 py-28 sm:py-36">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 flex items-center gap-4">
             <h2 className="text-xs font-semibold uppercase tracking-[0.28em] text-orange">
@@ -140,15 +146,19 @@ export default function Home() {
             <span className="h-px flex-1 bg-white/10" />
           </div>
           <p className="max-w-4xl text-2xl font-light leading-snug text-white/90 sm:text-[2rem]">
-            An independent advisory and investment firm specialising in mergers
-            &amp; acquisitions, capital raisings, industry roll-ups and strategic
-            advice across the Australian economy.
+            Miras Capital is an independent advisory and investment firm
+            specialising in mergers &amp; acquisitions, capital raisings, industry
+            roll-ups and strategic advisory services.
           </p>
           <p className="mt-7 max-w-2xl text-base leading-relaxed text-white/55">
-            We combine deep industry expertise with senior-level attention, and
-            prioritise aligned interests — flexible fee structures that often
-            include equity participation, fostering long-term, trusted-advisor
-            partnerships.
+            We provide comprehensive advice to businesses across various sectors
+            of the Australian economy, combining deep industry expertise with
+            senior-level attention to deliver exceptional outcomes.
+          </p>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/55">
+            We prioritise aligned interests, offering flexible fee structures
+            that often include equity participation, fostering long-term
+            trusted-advisor partnerships.
           </p>
         </div>
       </section>
