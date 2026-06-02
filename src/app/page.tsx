@@ -145,21 +145,24 @@ export default function Home() {
             </h2>
             <span className="h-px flex-1 bg-white/10" />
           </div>
-          <p className="max-w-4xl text-2xl font-light leading-snug text-white/90 sm:text-[2rem]">
-            Miras Capital is an independent advisory and investment firm
-            specialising in mergers &amp; acquisitions, capital raisings, industry
-            roll-ups and strategic advisory services.
-          </p>
-          <p className="mt-7 max-w-2xl text-base leading-relaxed text-white/55">
-            We provide comprehensive advice to businesses across various sectors
-            of the Australian economy, combining deep industry expertise with
-            senior-level attention to deliver exceptional outcomes.
-          </p>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/55">
-            We prioritise aligned interests, offering flexible fee structures
-            that often include equity participation, fostering long-term
-            trusted-advisor partnerships.
-          </p>
+          <div className="max-w-3xl space-y-6 text-lg font-light leading-relaxed text-white/80 sm:text-xl">
+            <p>
+              Miras Capital is an independent advisory and investment firm
+              specialising in mergers &amp; acquisitions, capital raisings,
+              industry roll-ups and strategic advisory services.
+            </p>
+            <p>
+              We provide comprehensive advice to businesses across various
+              sectors of the Australian economy, combining deep industry
+              expertise with senior-level attention to deliver exceptional
+              outcomes.
+            </p>
+            <p>
+              We prioritise aligned interests, offering flexible fee structures
+              that often include equity participation, fostering long-term
+              trusted-advisor partnerships.
+            </p>
+          </div>
         </div>
       </section>
 
