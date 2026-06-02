@@ -3,6 +3,9 @@
 /.pnp
 .pnp.js
 
+# skills CLI store (regenerated from skills-lock.json)
+/.agents/
+
 # next.js
 /.next/
 /out/
