@@ -61,19 +61,20 @@ export default function Home() {
           style={{ position: "absolute", inset: 0 }}
         />
 
-        {/* Legibility scrims — text sits over darkness on the left/bottom while
-            the flow stays vivid on the right (matches the tools-site layout). */}
+        {/* Legibility scrims — coloured with the shader's own base (#000014)
+            rather than the lighter `navy` token, so they darken without
+            desaturating the flow. Matches the tools-site overlay exactly. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy via-navy/75 to-transparent"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#000014] via-[#000014]/78 to-transparent"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-navy-deep to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#000014] to-transparent"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-navy/80 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#000014]/80 to-transparent"
         />
 
         <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col px-6">
@@ -85,7 +86,7 @@ export default function Home() {
       <div
         style={{
           background:
-            "linear-gradient(180deg, #0a1722 0%, #16364f 50%, #0a1722 100%)",
+            "linear-gradient(180deg, #000014 0%, #16364f 50%, #0a1722 100%)",
         }}
       >
         {/* ── ABOUT ────────────────────────────────────────────────────────── */}
