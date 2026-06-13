@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useMotionValueEvent, useScroll } from "motion/react"
-import { Magnetic } from "./Magnetic"
 
 /**
  * Sticky, scroll-aware top nav.
@@ -13,8 +12,7 @@ import { Magnetic } from "./Magnetic"
  * appears, keeping the brand + nav available for the rest of the page.
  *
  * Scroll state comes from Motion's `useScroll` (no `window.addEventListener`).
- * Every link carries an underline that grows from the centre on hover; the
- * Contact link additionally drifts toward the cursor (magnetic).
+ * Every link carries an underline that grows from the centre on hover.
  */
 
 // A nav link with a centre-grow underline on hover (snaps under reduced
@@ -77,9 +75,7 @@ export function SiteNav() {
             label="Transactions"
             className="hidden sm:inline"
           />
-          <Magnetic>
-            <NavLink href="#contact" label="Contact" />
-          </Magnetic>
+          <NavLink href="#contact" label="Contact" />
         </nav>
       </div>
     </header>
