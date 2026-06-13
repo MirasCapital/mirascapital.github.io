@@ -5,14 +5,12 @@ import { useEffect, useRef } from "react"
 /**
  * FlowField — smooth flowing-liquid backdrop for the Miras site.
  *
- * This is the tools-site `shader-background.tsx` flow (domain-warped fBm,
- * organic liquid), sharing its palette: deep-space navy base → Apple blue →
- * cyan highlights, so mirascapital.com and the tools site read as one brand.
- * Full-bleed; the page applies scrims so the wordmark sits over darkness on
- * the left while the flow stays vivid on the right.
+ * Domain-warped fBm flow rendered as a restrained monochrome haze (black base
+ * → dark grey → muted grey highlight). Full-bleed fixed backdrop; the page
+ * applies scrims so left-aligned text stays legible over it.
  *
  * Honors prefers-reduced-motion (single static frame) and pauses when the tab
- * is hidden or the hero scrolls out of view.
+ * is hidden.
  */
 
 const VERT = `

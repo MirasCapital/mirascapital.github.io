@@ -1,12 +1,10 @@
 @import "tailwindcss";
 
 /* ── Miras Capital brand tokens ──────────────────────────────────────────────
-   Official palette from the company intro presentation. Deep navy is the base;
-   orange is the primary accent; teal is the secondary; golds + gray support. */
+   The page itself is monochrome (black / grey / white); orange is the single
+   accent, used on the contact CTA, with golds supporting its hover/success
+   states. */
 @theme {
-  --color-navy: #0f1f2f;
-  --color-navy-deep: #0a1722;
-  --color-teal: #008db9;
   --color-orange: #cc922f;
   --color-gold: #caa45d;
   --color-gold-light: #d6c183;
