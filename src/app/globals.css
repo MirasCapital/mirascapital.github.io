@@ -28,11 +28,24 @@
 
 html {
   scroll-behavior: smooth;
-  background-color: var(--color-navy);
+  /* Matches the flow-field shader's base colour so there's no flash before the
+     fixed canvas paints. */
+  background-color: #000000;
+  /* Hide the scrollbar — the page scrolls freely (Lenis) and the progress dots
+     stand in as the position indicator. Firefox / legacy Edge. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* WebKit / Blink */
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 body {
-  background-color: var(--color-navy);
+  background-color: #000000;
   color: #ffffff;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -43,23 +56,4 @@ body {
   html {
     scroll-behavior: auto;
   }
-}
-
-/* ── Lenis smooth scroll ─────────────────────────────────────────────────────
-   Recommended base styles from the Lenis docs. The `lenis-smooth` rule turns
-   off CSS smooth-scroll while Lenis drives the animation (the two fight
-   otherwise); under reduced-motion Lenis never mounts, so the CSS behavior
-   above still applies. */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
 }

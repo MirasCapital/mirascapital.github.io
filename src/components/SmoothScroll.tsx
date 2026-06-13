@@ -4,13 +4,12 @@ import { useEffect } from "react"
 import Lenis from "lenis"
 
 /**
- * Site-wide inertia scrolling via Lenis. Renders nothing; mounts once in the
- * root layout. Skipped entirely under prefers-reduced-motion (native scroll
- * remains, and globals.css keeps CSS smooth-scroll for anchors in that case).
+ * Site-wide inertia scrolling via Lenis — the "smooth" half of the free/smooth
+ * feel. Renders nothing; mounts once in the root layout. Skipped under
+ * prefers-reduced-motion (native scroll remains).
  *
- * Anchor clicks are intercepted so in-page navigation animates through Lenis
- * instead of jumping natively. Lenis's scrollTo already subtracts the
- * target's scroll-margin-top, so no manual offset is passed.
+ * In-page anchor clicks (nav links and the progress dots, which are anchors)
+ * are intercepted so they glide through Lenis instead of jumping.
  */
 export function SmoothScroll() {
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { FlowField } from "@/components/FlowField"
+import { ImmersiveBackground } from "@/components/ImmersiveBackground"
 import { ContactForm } from "@/components/ContactForm"
 import { TransactionCards, type Deal } from "@/components/TransactionCards"
 import { SectionHeading } from "@/components/SectionHeading"
@@ -7,6 +7,8 @@ import { Reveal } from "@/components/Reveal"
 import { SiteNav } from "@/components/SiteNav"
 import { Parallax } from "@/components/Parallax"
 import { Stats, type Stat } from "@/components/Stats"
+import { StageChrome } from "@/components/StageChrome"
+import { ScrollCue } from "@/components/ScrollCue"
 
 // ── Recent Transactions ──────────────────────────────────────────────────────
 // Rendered as white "tombstone" cards so the client logos read cleanly on the
@@ -52,62 +54,42 @@ const stats: Stat[] = [
 
 export default function Home() {
   return (
-    <main className="bg-navy-deep text-white">
+    <main className="relative text-white">
       <SiteNav />
+
+      {/* Persistent flow-field scene + scrims behind every stage. */}
+      <ImmersiveBackground />
+
+      {/* Cinematic framing: progress dots + frame counter. */}
+      <StageChrome />
+
+      {/* Each section is a full-viewport stage; its content animates in as the
+          stage arrives and out as it leaves (Reveal `once={false}`). Scrolling
+          is free and smooth (Lenis), no snapping. */}
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section
         id="top"
-        className="relative h-[100svh] min-h-[600px] w-full overflow-hidden"
-        // Matches the WebGL scene's own gradient so the canvas fades in
-        // seamlessly over it (no flash before first paint).
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 60% at 64% 26%, #11407a 0%, #08203f 40%, #030c1c 72%, #000014 105%)",
-        }}
+        className="relative z-10 flex min-h-[100svh] items-center px-6"
       >
-        <FlowField
-          className="absolute inset-0 h-full w-full"
-          style={{ position: "absolute", inset: 0 }}
-        />
-
-        {/* Legibility scrims — coloured with the shader's own base (#000014)
-            rather than the lighter `navy` token, so they darken without
-            desaturating the flow. Matches the tools-site overlay exactly. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#000014] via-[#000014]/78 to-transparent"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#000014] to-transparent"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#000014]/80 to-transparent"
-        />
-
-        <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col px-6">
+        <div className="mx-auto w-full max-w-6xl">
           <HeroText />
         </div>
+        <ScrollCue />
       </section>
 
-      {/* Sections flow dark navy → navy → dark navy down the page. */}
-      <div
-        style={{
-          background:
-            "linear-gradient(180deg, #000014 0%, #16364f 50%, #0a1722 100%)",
-        }}
+      {/* ── ABOUT ────────────────────────────────────────────────────────── */}
+      <section
+        id="about"
+        className="relative z-10 flex min-h-[100svh] items-center px-6 py-24"
       >
-        {/* ── ABOUT ────────────────────────────────────────────────────────── */}
-        <section id="about" className="scroll-mt-20 px-6 py-28 sm:py-36">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto w-full max-w-6xl">
           <Parallax from={28} to={-28}>
-            <SectionHeading className="mb-12">
+            <SectionHeading once={false} className="mb-10">
               Independent advice, aligned interests.
             </SectionHeading>
           </Parallax>
-          <Reveal delay={0.08} className="max-w-3xl space-y-6">
+          <Reveal once={false} delay={0.08} className="max-w-3xl space-y-6">
             <p className="text-xl font-light leading-relaxed text-white/85 sm:text-2xl">
               Miras Capital is an independent advisory and investment firm
               specialising in mergers &amp; acquisitions, capital raisings,
@@ -125,38 +107,39 @@ export default function Home() {
               trusted-advisor partnerships.
             </p>
           </Reveal>
-          <Stats stats={stats} />
+          <Stats stats={stats} once={false} />
         </div>
       </section>
 
       {/* ── RECENT TRANSACTIONS ──────────────────────────────────────────── */}
       <section
         id="transactions"
-        className="scroll-mt-20 px-6 py-28 sm:py-32"
+        className="relative z-10 flex min-h-[100svh] items-center px-6 py-24"
       >
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto w-full max-w-6xl">
           <Parallax from={24} to={-24}>
-            <SectionHeading className="mb-12">Recent transactions</SectionHeading>
+            <SectionHeading once={false} className="mb-10">
+              Recent transactions
+            </SectionHeading>
           </Parallax>
           <TransactionCards transactions={transactions} />
         </div>
       </section>
 
-      {/* ── CONTACT (+ footer share the closing screen) ──────────────────── */}
-      {/* Sized to one viewport minus the nav so clicking "Contact" lands at the
-          very bottom of the page: the form sits centred in the space and the
-          footer is pinned to the bottom, both visible at once. */}
+      {/* ── CONTACT (+ footer share the closing stage) ───────────────────── */}
       <section
         id="contact"
-        className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 flex-col px-6"
+        className="relative z-10 flex min-h-[100svh] flex-col px-6"
       >
-        <div className="flex flex-1 items-center py-20">
+        <div className="flex flex-1 items-center py-24">
           <div className="mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-20">
             <div>
               <Parallax from={20} to={-20}>
-                <SectionHeading>Your first move shapes the game.</SectionHeading>
+                <SectionHeading once={false}>
+                  Your first move shapes the game.
+                </SectionHeading>
               </Parallax>
-              <Reveal delay={0.08}>
+              <Reveal once={false} delay={0.08}>
                 <p className="mt-6 max-w-md text-lg leading-relaxed text-white/60">
                   Tell us your goals, and together we&apos;ll help you make them
                   happen.
@@ -176,7 +159,6 @@ export default function Home() {
           </div>
         </footer>
       </section>
-      </div>
     </main>
   )
 }

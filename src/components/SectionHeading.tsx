@@ -9,12 +9,14 @@ import { Reveal } from "./Reveal"
 export function SectionHeading({
   children,
   className,
+  once = true,
 }: {
   children: React.ReactNode
   className?: string
+  once?: boolean
 }) {
   return (
-    <Reveal className={className}>
+    <Reveal className={className} once={once}>
       <span className="block h-[3px] w-10 rounded-full bg-orange" />
       <h2 className="mt-6 max-w-[20ch] font-display text-4xl font-semibold leading-[1.04] tracking-tight text-balance text-white sm:text-5xl">
         {children}

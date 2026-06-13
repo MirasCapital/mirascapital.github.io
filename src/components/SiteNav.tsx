@@ -8,7 +8,7 @@ import { useMotionValueEvent, useScroll } from "motion/react"
  *
  * Over the hero it's transparent and the wordmark is hidden (the giant hero
  * wordmark is right there, so repeating it would be redundant). Once you scroll
- * past the hero, a blurred navy backdrop fades in and the small wordmark
+ * past the hero, a blurred black backdrop fades in and the small wordmark
  * appears, keeping the brand + nav available for the rest of the page.
  *
  * Scroll state comes from Motion's `useScroll` (no `window.addEventListener`).
@@ -55,7 +55,7 @@ export function SiteNav() {
     <header
       className={`fixed inset-x-0 top-0 z-40 border-b transition-colors duration-300 ${
         scrolled
-          ? "border-white/10 bg-navy-deep/80 backdrop-blur-md"
+          ? "border-white/10 bg-black/65 backdrop-blur-md"
           : "border-transparent bg-transparent"
       }`}
     >

@@ -42,11 +42,11 @@ function CountUp({ value, prefix = "", suffix = "" }: Omit<Stat, "label">) {
 }
 
 /** Stat row for the About section: big display numbers over quiet labels. */
-export function Stats({ stats }: { stats: Stat[] }) {
+export function Stats({ stats, once = true }: { stats: Stat[]; once?: boolean }) {
   return (
     <div className="mt-16 grid grid-cols-1 gap-10 border-t border-white/10 pt-12 sm:grid-cols-3">
       {stats.map((s, i) => (
-        <Reveal key={s.label} delay={i * 0.08}>
+        <Reveal key={s.label} delay={i * 0.08} once={once}>
           <div className="font-display text-5xl font-semibold leading-none text-white sm:text-6xl">
             <CountUp value={s.value} prefix={s.prefix} suffix={s.suffix} />
           </div>

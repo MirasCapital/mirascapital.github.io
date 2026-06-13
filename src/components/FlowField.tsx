@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 
 /**
- * FlowField — smooth flowing-liquid hero for the Miras site.
+ * FlowField — smooth flowing-liquid backdrop for the Miras site.
  *
  * This is the tools-site `shader-background.tsx` flow (domain-warped fBm,
  * organic liquid), sharing its palette: deep-space navy base → Apple blue →
@@ -42,7 +42,7 @@ uniform vec2  u_mouse; // pointer in p-space (aspect-corrected, scaled)
 uniform float u_mstr;  // pointer influence 0..1, eased in/out
 uniform vec3  u_c1; // cyan highlight
 uniform vec3  u_c2; // Apple blue
-uniform vec3  u_c3; // deep-space navy base
+uniform vec3  u_c3; // black base
 
 vec3 mod289(vec3 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec2 mod289(vec2 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -147,9 +147,13 @@ const hex = (h: string): [number, number, number] => {
 export function FlowField({
   className,
   style,
+  intensityRef,
 }: {
   className?: string
   style?: React.CSSProperties
+  // 0.4‒1 multiplier on the flow speed, read every frame so the parent can
+  // "calm" the shader as content scrolls in. Defaults to full speed.
+  intensityRef?: React.RefObject<number>
 }) {
   const ref = useRef<HTMLCanvasElement>(null)
 
@@ -186,20 +190,22 @@ export function FlowField({
     const uMouse = u("u_mouse")
     const uMstr = u("u_mstr")
 
-    // Miras-tools palette + tone (deep-space navy → Apple blue → cyan highlight).
-    // Matched to the tools home page so the two sites read as one brand.
-    const SCALE = 1.35
+    // Monochrome haze, tuned restrained for an advisory firm: large, slow,
+    // soft forms (low scale + amp + warp, high soft) that drift rather than
+    // churn, and a muted-grey highlight (not white) with no edge glow — so the
+    // backdrop reads as quiet smoke, mostly black, never busy.
+    const SCALE = 0.85
     gl.uniform1f(u("u_scale"), SCALE)
-    gl.uniform1f(u("u_amp"), 0.95)
-    gl.uniform1f(u("u_warp"), 1.5)
-    gl.uniform1f(u("u_soft"), 0.62)
-    gl.uniform1f(u("u_chroma"), 0.1)
-    gl.uniform1f(u("u_grain"), 0.045)
-    gl.uniform1f(u("u_bright"), -0.1)
-    gl.uniform1f(u("u_sat"), -0.05)
-    gl.uniform3fv(u("u_c1"), hex("#8cd6d9")) // cyan highlight
-    gl.uniform3fv(u("u_c2"), hex("#2997ff")) // Apple blue
-    gl.uniform3fv(u("u_c3"), hex("#000014")) // deep-space navy base
+    gl.uniform1f(u("u_amp"), 0.62)
+    gl.uniform1f(u("u_warp"), 0.8)
+    gl.uniform1f(u("u_soft"), 0.85)
+    gl.uniform1f(u("u_chroma"), 0.0)
+    gl.uniform1f(u("u_grain"), 0.035)
+    gl.uniform1f(u("u_bright"), -0.12)
+    gl.uniform1f(u("u_sat"), 0.0)
+    gl.uniform3fv(u("u_c1"), hex("#86868c")) // muted grey highlight
+    gl.uniform3fv(u("u_c2"), hex("#2c2c32")) // dark grey
+    gl.uniform3fv(u("u_c3"), hex("#000000")) // black base
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
@@ -241,11 +247,20 @@ export function FlowField({
     }
 
     let raf = 0
-    let running = true
-    const start = performance.now()
+    // Flow time is *accumulated* (not derived from a fixed epoch) so the
+    // parent can vary the speed each frame — slowing the flow as content
+    // scrolls in — without the phase jumping when the speed changes.
+    let last = performance.now()
+    let tAccum = 0
+    let speed = 1
     const render = (now: number) => {
       resize()
-      const t = reduced ? 14 : ((now - start) / 1000) * 0.16
+      const dt = Math.min(now - last, 50) // clamp so a resumed tab doesn't jump
+      last = now
+      const target = intensityRef?.current ?? 1
+      speed += (target - speed) * 0.05
+      if (!reduced) tAccum += dt * 0.001 * 0.085 * speed
+      const t = reduced ? 14 : tAccum
       gl.uniform1f(uTime, t)
       mouse.x += (mouse.tx - mouse.x) * 0.06
       mouse.y += (mouse.ty - mouse.y) * 0.06
@@ -253,42 +268,32 @@ export function FlowField({
       gl.uniform2f(uMouse, mouse.x, mouse.y)
       gl.uniform1f(uMstr, reduced ? 0 : mouse.s)
       gl.drawArrays(gl.TRIANGLES, 0, 3)
-      if (!reduced && running) raf = requestAnimationFrame(render)
+      if (!reduced) raf = requestAnimationFrame(render)
     }
 
     const onVisibility = () => {
       if (document.hidden) {
         cancelAnimationFrame(raf)
-      } else if (!reduced && running) {
+      } else if (!reduced) {
+        last = performance.now()
         raf = requestAnimationFrame(render)
       }
     }
     document.addEventListener("visibilitychange", onVisibility)
 
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        running = entry.isIntersecting
-        if (running && !reduced) raf = requestAnimationFrame(render)
-        else cancelAnimationFrame(raf)
-      },
-      { rootMargin: "100px" },
-    )
-    io.observe(canvas)
-
-    render(start)
+    render(last)
 
     return () => {
       cancelAnimationFrame(raf)
       document.removeEventListener("visibilitychange", onVisibility)
       window.removeEventListener("pointermove", onPointerMove)
       window.removeEventListener("pointerout", onPointerOut)
-      io.disconnect()
       gl.deleteProgram(prog)
       gl.deleteShader(vs)
       gl.deleteShader(fs)
       gl.deleteBuffer(buf)
     }
-  }, [])
+  }, [intensityRef])
 
   return <canvas ref={ref} aria-hidden className={className} style={style} />
 }

@@ -15,11 +15,17 @@ export function Reveal({
   children,
   delay = 0,
   y = 16,
+  once = true,
+  amount = 0.3,
   className,
 }: {
   children: ReactNode
   delay?: number
   y?: number
+  // `once={false}` lets the content animate back out when its stage leaves the
+  // viewport and in again on return — the in/out feel of the snap-paged layout.
+  once?: boolean
+  amount?: number
   className?: string
 }) {
   const reduce = useReducedMotion()
@@ -28,7 +34,7 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
+      viewport={{ once, amount }}
       transition={
         reduce
           ? { duration: 0 }

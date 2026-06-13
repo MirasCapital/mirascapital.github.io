@@ -99,7 +99,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={sending}
-        className="group mt-1 inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-orange px-6 py-4 text-sm font-semibold uppercase tracking-[0.12em] text-navy transition duration-200 ease-out hover:bg-gold active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+        className="group mt-1 inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-orange px-6 py-4 text-sm font-semibold uppercase tracking-[0.12em] text-black transition duration-200 ease-out hover:bg-gold active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
       >
         {sending ? "Sending" : "Let's talk"}
         {sending ? (
