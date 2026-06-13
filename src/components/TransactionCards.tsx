@@ -137,10 +137,17 @@ export function TransactionCards({ transactions }: { transactions: Deal[] }) {
           <motion.div
             key={deal.alt}
             className="w-full max-w-[300px]"
-            initial={reduce ? false : { opacity: 0, y: 18 }}
+            // Initial state must not branch on `reduce` (the server can't
+            // know it — branching causes a hydration mismatch); reduced
+            // motion collapses to a zero-duration snap instead.
+            initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+            transition={
+              reduce
+                ? { duration: 0 }
+                : { duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }
+            }
           >
             <Tombstone deal={deal} />
           </motion.div>

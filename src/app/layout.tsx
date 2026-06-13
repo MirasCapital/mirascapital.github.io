@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Josefin_Sans } from "next/font/google"
+import { SmoothScroll } from "@/components/SmoothScroll"
 import "./globals.css"
 
 // Brand wordmark font ("MIRAS CAPITAL").
@@ -56,7 +57,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={josefin.variable}>
-      <body>{children}</body>
+      <body>
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   )
 }

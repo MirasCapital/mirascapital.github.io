@@ -38,6 +38,8 @@ uniform float u_chroma;
 uniform float u_grain;
 uniform float u_bright;
 uniform float u_sat;
+uniform vec2  u_mouse; // pointer in p-space (aspect-corrected, scaled)
+uniform float u_mstr;  // pointer influence 0..1, eased in/out
 uniform vec3  u_c1; // cyan highlight
 uniform vec3  u_c2; // Apple blue
 uniform vec3  u_c3; // deep-space navy base
@@ -88,13 +90,19 @@ void main() {
 
   float t = u_time;
 
+  // Pointer influence: a soft falloff around the cursor that stirs the warp
+  // (perpendicular swirl) and lifts brightness, so the liquid reacts to you.
+  vec2 dm = p - u_mouse;
+  float md = exp(-dot(dm, dm) * 1.6) * u_mstr;
+
   // Two-pass domain warp → organic, liquid flow.
   vec2 q = vec2(fbm(p + vec2(0.0, t * 0.10)),
                 fbm(p + vec2(5.2, 1.3) - t * 0.12));
+  q += 0.45 * md * vec2(dm.y, -dm.x);
   vec2 r = vec2(fbm(p + u_warp * q + vec2(1.7, 9.2) + t * 0.08),
                 fbm(p + u_warp * q + vec2(8.3, 2.8) - t * 0.09));
   float n = fbm(p + u_warp * r);
-  n = clamp(n * u_amp + 0.5, 0.0, 1.0);
+  n = clamp(n * u_amp + 0.5 + 0.08 * md, 0.0, 1.0);
 
   float e = mix(0.04, 0.26, u_soft);
   vec3 col = u_c3;
@@ -175,10 +183,13 @@ export function FlowField({
     const u = (name: string) => gl.getUniformLocation(prog, name)
     const uTime = u("u_time")
     const uRes = u("u_res")
+    const uMouse = u("u_mouse")
+    const uMstr = u("u_mstr")
 
     // Miras-tools palette + tone (deep-space navy → Apple blue → cyan highlight).
     // Matched to the tools home page so the two sites read as one brand.
-    gl.uniform1f(u("u_scale"), 1.35)
+    const SCALE = 1.35
+    gl.uniform1f(u("u_scale"), SCALE)
     gl.uniform1f(u("u_amp"), 0.95)
     gl.uniform1f(u("u_warp"), 1.5)
     gl.uniform1f(u("u_soft"), 0.62)
@@ -191,6 +202,31 @@ export function FlowField({
     gl.uniform3fv(u("u_c3"), hex("#000014")) // deep-space navy base
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    // Pointer state in shader p-space. Position and strength are lerped each
+    // frame so the swirl trails the cursor and fades in/out rather than
+    // snapping. Strength stays 0 until the pointer first moves over the hero.
+    const mouse = { x: 0, y: 0, s: 0, tx: 0, ty: 0, ts: 0 }
+    const onPointerMove = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect()
+      if (r.width === 0 || r.height === 0) return
+      const inside =
+        e.clientX >= r.left && e.clientX <= r.right &&
+        e.clientY >= r.top && e.clientY <= r.bottom
+      mouse.ts = inside ? 1 : 0
+      if (inside) {
+        const aspect = r.width / r.height
+        mouse.tx = ((e.clientX - r.left) / r.width - 0.5) * aspect * SCALE
+        mouse.ty = (0.5 - (e.clientY - r.top) / r.height) * SCALE
+      }
+    }
+    const onPointerOut = (e: PointerEvent) => {
+      if (!e.relatedTarget) mouse.ts = 0
+    }
+    if (!reduced) {
+      window.addEventListener("pointermove", onPointerMove, { passive: true })
+      window.addEventListener("pointerout", onPointerOut)
+    }
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.75)
@@ -211,6 +247,11 @@ export function FlowField({
       resize()
       const t = reduced ? 14 : ((now - start) / 1000) * 0.16
       gl.uniform1f(uTime, t)
+      mouse.x += (mouse.tx - mouse.x) * 0.06
+      mouse.y += (mouse.ty - mouse.y) * 0.06
+      mouse.s += (mouse.ts - mouse.s) * 0.05
+      gl.uniform2f(uMouse, mouse.x, mouse.y)
+      gl.uniform1f(uMstr, reduced ? 0 : mouse.s)
       gl.drawArrays(gl.TRIANGLES, 0, 3)
       if (!reduced && running) raf = requestAnimationFrame(render)
     }
@@ -239,6 +280,8 @@ export function FlowField({
     return () => {
       cancelAnimationFrame(raf)
       document.removeEventListener("visibilitychange", onVisibility)
+      window.removeEventListener("pointermove", onPointerMove)
+      window.removeEventListener("pointerout", onPointerOut)
       io.disconnect()
       gl.deleteProgram(prog)
       gl.deleteShader(vs)

@@ -5,6 +5,8 @@ import { SectionHeading } from "@/components/SectionHeading"
 import { HeroText } from "@/components/HeroText"
 import { Reveal } from "@/components/Reveal"
 import { SiteNav } from "@/components/SiteNav"
+import { Parallax } from "@/components/Parallax"
+import { Stats, type Stat } from "@/components/Stats"
 
 // ── Recent Transactions ──────────────────────────────────────────────────────
 // Rendered as white "tombstone" cards so the client logos read cleanly on the
@@ -38,6 +40,14 @@ const transactions: Deal[] = [
     counterAlt: "Murray River Pet Food",
     year: "2025",
   },
+]
+
+// ── About stats ──────────────────────────────────────────────────────────────
+// Figures supplied by the client (Nihat, Jun 2026).
+const stats: Stat[] = [
+  { value: 50, suffix: "+", label: "Deals advised" },
+  { value: 15, suffix: "+", label: "Years of experience" },
+  { value: 5, suffix: "+", label: "Industry sectors" },
 ]
 
 export default function Home() {
@@ -92,9 +102,11 @@ export default function Home() {
         {/* ── ABOUT ────────────────────────────────────────────────────────── */}
         <section id="about" className="scroll-mt-20 px-6 py-28 sm:py-36">
         <div className="mx-auto max-w-6xl">
-          <SectionHeading className="mb-12">
-            Independent advice, aligned interests.
-          </SectionHeading>
+          <Parallax from={28} to={-28}>
+            <SectionHeading className="mb-12">
+              Independent advice, aligned interests.
+            </SectionHeading>
+          </Parallax>
           <Reveal delay={0.08} className="max-w-3xl space-y-6">
             <p className="text-xl font-light leading-relaxed text-white/85 sm:text-2xl">
               Miras Capital is an independent advisory and investment firm
@@ -113,6 +125,7 @@ export default function Home() {
               trusted-advisor partnerships.
             </p>
           </Reveal>
+          <Stats stats={stats} />
         </div>
       </section>
 
@@ -122,7 +135,9 @@ export default function Home() {
         className="scroll-mt-20 px-6 py-28 sm:py-32"
       >
         <div className="mx-auto max-w-6xl">
-          <SectionHeading className="mb-12">Recent transactions</SectionHeading>
+          <Parallax from={24} to={-24}>
+            <SectionHeading className="mb-12">Recent transactions</SectionHeading>
+          </Parallax>
           <TransactionCards transactions={transactions} />
         </div>
       </section>
@@ -138,7 +153,9 @@ export default function Home() {
         <div className="flex flex-1 items-center py-20">
           <div className="mx-auto grid w-full max-w-6xl items-center gap-12 md:grid-cols-2 md:gap-20">
             <div>
-              <SectionHeading>Your first move shapes the game.</SectionHeading>
+              <Parallax from={20} to={-20}>
+                <SectionHeading>Your first move shapes the game.</SectionHeading>
+              </Parallax>
               <Reveal delay={0.08}>
                 <p className="mt-6 max-w-md text-lg leading-relaxed text-white/60">
                   Tell us your goals, and together we&apos;ll help you make them
