@@ -50,6 +50,18 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Neutralise Chrome's autofill styling — it paints a blue-grey background on
+   autofilled inputs (dark colour-scheme) that `background-color` can't override.
+   The absurdly long background-color transition keeps that fill from ever
+   showing, so the field keeps its own translucent background. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
