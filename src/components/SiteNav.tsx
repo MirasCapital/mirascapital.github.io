@@ -13,13 +13,36 @@ import { Magnetic } from "./Magnetic"
  * appears, keeping the brand + nav available for the rest of the page.
  *
  * Scroll state comes from Motion's `useScroll` (no `window.addEventListener`).
- * The text links carry an underline that grows from the centre on hover; the
- * Contact CTA is a magnetic pill that drifts toward the cursor.
+ * Every link carries an underline that grows from the centre on hover; the
+ * Contact link additionally drifts toward the cursor (magnetic).
  */
-const links = [
-  { href: "#about", label: "About" },
-  { href: "#transactions", label: "Transactions" },
-]
+
+// A nav link with a centre-grow underline on hover (snaps under reduced
+// motion). Shared by all three items so they read identically.
+function NavLink({
+  href,
+  label,
+  className,
+}: {
+  href: string
+  label: string
+  className?: string
+}) {
+  return (
+    <a
+      href={href}
+      className={`group relative text-white/60 transition-colors duration-200 hover:text-white ${
+        className ?? ""
+      }`}
+    >
+      {label}
+      <span
+        aria-hidden
+        className="absolute -bottom-1.5 left-0 h-px w-full origin-center scale-x-0 bg-current transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
+      />
+    </a>
+  )
+}
 
 export function SiteNav() {
   const { scrollY } = useScroll()
@@ -48,28 +71,14 @@ export function SiteNav() {
           Miras Capital
         </a>
         <nav className="flex items-center gap-7 text-xs font-medium uppercase tracking-[0.18em]">
-          {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="group relative hidden text-white/60 transition-colors duration-200 hover:text-white sm:inline"
-            >
-              {l.label}
-              {/* Underline grows from the centre out on hover. Snaps (no
-                  transition) under reduced motion. */}
-              <span
-                aria-hidden
-                className="absolute -bottom-1.5 left-0 h-px w-full origin-center scale-x-0 bg-current transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
-              />
-            </a>
-          ))}
+          <NavLink href="#about" label="About" className="hidden sm:inline" />
+          <NavLink
+            href="#transactions"
+            label="Transactions"
+            className="hidden sm:inline"
+          />
           <Magnetic>
-            <a
-              href="#contact"
-              className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-white/80 transition-colors duration-200 hover:border-white/60 hover:bg-white/[0.06] hover:text-white"
-            >
-              Contact
-            </a>
+            <NavLink href="#contact" label="Contact" />
           </Magnetic>
         </nav>
       </div>
