@@ -62,28 +62,20 @@ input:-webkit-autofill:focus {
   transition: background-color 9999s ease-in-out 0s;
 }
 
-/* ── Harbour "helicopter cam" ─────────────────────────────────────────────────
-   Two un-synced loops compose an organic hover: a push/pull zoom and a
-   wandering left/right/up/down sway. The zoom floor (1.18) guarantees enough
-   overflow that the sway never reveals the image edges. */
-@keyframes hero-zoom {
-  from { transform: scale(1.18); }
-  to   { transform: scale(1.4); }
+/* ── Camera drift (gentle lateral pan) ───────────────────────────────────────
+   The video already supplies the big zoom-out (full scope) and the eased pause;
+   this only adds a slow lateral/vertical drift so there's some pan the footage
+   itself doesn't have. Kept gentle (scale ~1.06, ≤2.5% travel) so it barely
+   crops the scope. */
+@keyframes cam {
+  0%   { transform: scale(1.06) translate(-2.5%, 1.2%); }
+  33%  { transform: scale(1.07) translate(2.5%, -1%); }
+  66%  { transform: scale(1.06) translate(1.2%, 1.5%); }
+  100% { transform: scale(1.06) translate(-2.5%, 1.2%); }
 }
-@keyframes hero-pan {
-  0%   { transform: translate(-2.4%, 1.4%); }
-  25%  { transform: translate(1.6%, -1.8%); }
-  50%  { transform: translate(2.4%, 0.9%); }
-  75%  { transform: translate(-1.2%, -1.4%); }
-  100% { transform: translate(-2.4%, 1.4%); }
-}
-.hero-zoom {
-  animation: hero-zoom 19s ease-in-out infinite alternate;
-  transform-origin: 50% 42%;
-  will-change: transform;
-}
-.hero-pan {
-  animation: hero-pan 28s ease-in-out infinite;
+.cam {
+  animation: cam 46s ease-in-out infinite;
+  transform-origin: 50% 50%;
   will-change: transform;
 }
 
@@ -91,12 +83,8 @@ input:-webkit-autofill:focus {
   html {
     scroll-behavior: auto;
   }
-  .hero-zoom {
+  .cam {
     animation: none;
-    transform: scale(1.18);
-  }
-  .hero-pan {
-    animation: none;
-    transform: none;
+    transform: scale(1.12);
   }
 }
