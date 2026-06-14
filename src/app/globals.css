@@ -62,8 +62,41 @@ input:-webkit-autofill:focus {
   transition: background-color 9999s ease-in-out 0s;
 }
 
+/* ── Harbour "helicopter cam" ─────────────────────────────────────────────────
+   Two un-synced loops compose an organic hover: a push/pull zoom and a
+   wandering left/right/up/down sway. The zoom floor (1.18) guarantees enough
+   overflow that the sway never reveals the image edges. */
+@keyframes hero-zoom {
+  from { transform: scale(1.18); }
+  to   { transform: scale(1.4); }
+}
+@keyframes hero-pan {
+  0%   { transform: translate(-2.4%, 1.4%); }
+  25%  { transform: translate(1.6%, -1.8%); }
+  50%  { transform: translate(2.4%, 0.9%); }
+  75%  { transform: translate(-1.2%, -1.4%); }
+  100% { transform: translate(-2.4%, 1.4%); }
+}
+.hero-zoom {
+  animation: hero-zoom 19s ease-in-out infinite alternate;
+  transform-origin: 50% 42%;
+  will-change: transform;
+}
+.hero-pan {
+  animation: hero-pan 28s ease-in-out infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .hero-zoom {
+    animation: none;
+    transform: scale(1.18);
+  }
+  .hero-pan {
+    animation: none;
+    transform: none;
   }
 }
