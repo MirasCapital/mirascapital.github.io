@@ -7,7 +7,6 @@ import { Reveal } from "@/components/Reveal"
 import { SiteNav } from "@/components/SiteNav"
 import { Parallax } from "@/components/Parallax"
 import { Stats, type Stat } from "@/components/Stats"
-import { StageChrome } from "@/components/StageChrome"
 import { ScrollCue } from "@/components/ScrollCue"
 
 // ── Recent Transactions ──────────────────────────────────────────────────────
@@ -59,9 +58,6 @@ export default function Home() {
 
       {/* Persistent flow-field scene + scrims behind every stage. */}
       <ImmersiveBackground />
-
-      {/* Cinematic framing: progress dots + frame counter. */}
-      <StageChrome />
 
       {/* Each section is a full-viewport stage; its content animates in as the
           stage arrives and out as it leaves (Reveal `once={false}`). Scrolling
