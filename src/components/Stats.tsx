@@ -44,13 +44,13 @@ function CountUp({ value, prefix = "", suffix = "" }: Omit<Stat, "label">) {
 /** Stat row for the About section: big display numbers over quiet labels. */
 export function Stats({ stats, once = true }: { stats: Stat[]; once?: boolean }) {
   return (
-    <div className="mt-16 grid grid-cols-1 gap-10 border-t border-white/10 pt-12 sm:grid-cols-3">
+    <div className="mt-20 grid grid-cols-1 gap-10 border-t border-cloud/12 pt-10 sm:mt-28 sm:grid-cols-4 sm:gap-6 sm:pt-12">
       {stats.map((s, i) => (
         <Reveal key={s.label} delay={i * 0.08} once={once}>
-          <div className="font-display text-5xl font-semibold leading-none text-white sm:text-6xl">
+          <div className="text-5xl font-medium leading-none tracking-[-0.05em] text-cloud sm:text-6xl lg:text-7xl">
             <CountUp value={s.value} prefix={s.prefix} suffix={s.suffix} />
           </div>
-          <div className="mt-3 text-xs font-medium uppercase tracking-[0.18em] text-white/50">
+          <div className="mt-4 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-cloud/45">
             {s.label}
           </div>
         </Reveal>

@@ -1,42 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useMotionValueEvent, useScroll } from "motion/react"
 
-/**
- * Sticky, scroll-aware top nav.
- *
- * Over the hero it's transparent and the wordmark is hidden (the giant hero
- * wordmark is right there, so repeating it would be redundant). Once you scroll
- * past the hero, a blurred black backdrop fades in and the small wordmark
- * appears, keeping the brand + nav available for the rest of the page.
- *
- * Scroll state comes from Motion's `useScroll` (no `window.addEventListener`).
- * Every link carries an underline that grows from the centre on hover.
- */
-
-// A nav link with a centre-grow underline on hover (snaps under reduced
-// motion). Shared by all three items so they read identically.
-function NavLink({
-  href,
-  label,
-  className,
-}: {
-  href: string
-  label: string
-  className?: string
-}) {
+function NavLink({ href, label, className = "" }: { href: string; label: string; className?: string }) {
   return (
     <a
       href={href}
-      className={`group relative text-white/60 transition-colors duration-200 hover:text-white ${
-        className ?? ""
-      }`}
+      className={`group relative py-2 text-[0.67rem] font-medium uppercase tracking-[0.13em] text-cloud/62 transition-colors duration-200 hover:text-cloud ${className}`}
     >
       {label}
       <span
         aria-hidden
-        className="absolute -bottom-1.5 left-0 h-px w-full origin-center scale-x-0 bg-current transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
+        className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-200 ease-out group-hover:scale-x-100 motion-reduce:transition-none"
       />
     </a>
   )
@@ -45,36 +21,49 @@ function NavLink({
 export function SiteNav() {
   const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
+  const [showWordmark, setShowWordmark] = useState(false)
+
+  const syncHeader = useCallback((y: number) => {
+    setScrolled(y > 32)
+    setShowWordmark(y >= window.innerHeight * 0.78)
+  }, [])
 
   useMotionValueEvent(scrollY, "change", (y) => {
-    const next = y > 40
-    if (next !== scrolled) setScrolled(next)
+    syncHeader(y)
   })
+
+  useEffect(() => {
+    syncHeader(window.scrollY)
+    const onResize = () => syncHeader(window.scrollY)
+    window.addEventListener("resize", onResize, { passive: true })
+    return () => window.removeEventListener("resize", onResize)
+  }, [syncHeader])
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 border-b transition-colors duration-300 ${
+      className={`fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color] duration-200 ${
         scrolled
-          ? "border-white/10 bg-black/65 backdrop-blur-md"
+          ? "border-cloud/10 bg-ink/82 backdrop-blur-xl"
           : "border-transparent bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
         <a
           href="#top"
-          className={`font-display text-lg font-bold uppercase leading-none tracking-[0.04em] text-white transition-opacity duration-300 ${
-            scrolled ? "opacity-100" : "pointer-events-none opacity-0"
+          translate="no"
+          aria-hidden={!showWordmark}
+          tabIndex={showWordmark ? 0 : -1}
+          className={`font-display text-base font-bold uppercase leading-none tracking-[0.045em] text-cloud transition-[opacity,transform] duration-200 ease-out sm:text-lg ${
+            showWordmark
+              ? "translate-y-0 opacity-100"
+              : "pointer-events-none -translate-y-1.5 opacity-0"
           }`}
         >
           Miras Capital
         </a>
-        <nav className="flex items-center gap-7 text-xs font-medium uppercase tracking-[0.18em]">
-          <NavLink href="#about" label="About" className="hidden sm:inline" />
-          <NavLink
-            href="#transactions"
-            label="Transactions"
-            className="hidden sm:inline"
-          />
+        <nav aria-label="Primary navigation" className="flex items-center gap-4 sm:gap-7">
+          <NavLink href="#about" label="About" />
+          <NavLink href="#transactions" label="Transactions" className="max-[479px]:hidden" />
           <NavLink href="#contact" label="Contact" />
         </nav>
       </div>

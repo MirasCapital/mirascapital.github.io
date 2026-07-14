@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Josefin_Sans } from "next/font/google"
+import { IBM_Plex_Mono, IBM_Plex_Sans, Josefin_Sans } from "next/font/google"
 import { SmoothScroll } from "@/components/SmoothScroll"
 import "./globals.css"
 
@@ -11,9 +11,23 @@ const josefin = Josefin_Sans({
   display: "swap",
 })
 
+const plexSans = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-sans",
+  display: "swap",
+})
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
+  display: "swap",
+})
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.mirascapital.com"),
-  title: "Miras Capital",
+  title: "Miras Capital | Independent Advisory and Investment",
   description:
     "Miras Capital is an independent advisory and investment firm specialising in mergers & acquisitions, capital raisings, industry roll-ups and strategic advisory services.",
   keywords: [
@@ -42,11 +56,18 @@ export const metadata: Metadata = {
     description:
       "Independent advisory and investment firm. M&A, capital raisings, industry roll-ups and strategic advice.",
     siteName: "Miras Capital",
+    images: [{ url: "/miras-cover-art.png", width: 1627, height: 670, alt: "Miras Capital cover artwork" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Miras Capital",
+    description: "Independent advice and aligned investment for Australian businesses.",
+    images: ["/miras-cover-art.png"],
   },
 }
 
 export const viewport = {
-  themeColor: "#000000",
+  themeColor: "#001323",
   colorScheme: "dark" as const,
 }
 
@@ -56,7 +77,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={josefin.variable}>
+    <html lang="en" className={`${josefin.variable} ${plexSans.variable} ${plexMono.variable}`}>
       <body>
         <SmoothScroll />
         {children}

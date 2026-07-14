@@ -9,20 +9,14 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react"
 
-// Posts to Web3Forms (no backend needed, works on a static GitHub Pages site).
-// Same access key as the original site.
 const ACCESS_KEY = "087fba1e-6e92-4fc4-9e2d-1d626a0bea5e"
 
 type Status = "idle" | "sending" | "ok" | "error"
 
-// Floating-label field: the title sits centered inside the box like a
-// placeholder, then shrinks and rises to the top edge on focus or once the
-// field has a value. The real <label> stays in the DOM and stays associated
-// (htmlFor/id), so this is a true floating label, not placeholder-as-label.
 const inputClass =
-  "peer w-full rounded-xl border border-white/12 bg-white/[0.03] px-4 pt-6 pb-2 text-[15px] text-white outline-none transition duration-200 hover:border-white/25 focus:border-orange/60 focus:bg-white/[0.05] focus:ring-4 focus:ring-orange/15"
+  "peer w-full rounded-2xl border border-cloud/14 bg-cloud/[0.035] px-5 pb-3 pt-7 text-[15px] text-cloud outline-none transition-[background-color,border-color,box-shadow] duration-200 hover:border-cloud/28 focus:border-accent/70 focus:bg-cloud/[0.055] focus:ring-4 focus:ring-accent/10"
 const labelClass =
-  "pointer-events-none absolute left-4 top-2 origin-left text-[0.7rem] font-medium tracking-[0.02em] text-white/45 transition-all duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[15px] peer-placeholder-shown:font-normal peer-placeholder-shown:text-white/40 peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.7rem] peer-focus:font-medium peer-focus:text-orange/80"
+  "pointer-events-none absolute left-5 top-2.5 origin-left text-[0.67rem] font-medium tracking-[0.02em] text-cloud/45 transition-[color,font-size,transform,top] duration-200 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[15px] peer-placeholder-shown:font-normal peer-placeholder-shown:text-cloud/42 peer-focus:top-2.5 peer-focus:translate-y-0 peer-focus:text-[0.67rem] peer-focus:font-medium peer-focus:text-accent"
 
 function Field({
   id,
@@ -50,6 +44,24 @@ function Field({
       />
       <label htmlFor={id} className={labelClass}>
         {label}
+      </label>
+    </div>
+  )
+}
+
+function MessageField() {
+  return (
+    <div className="relative">
+      <textarea
+        id="cf-message"
+        name="message"
+        required
+        rows={5}
+        placeholder=" "
+        className={`${inputClass} min-h-36 resize-y`}
+      />
+      <label htmlFor="cf-message" className={`${labelClass} peer-placeholder-shown:top-7 peer-placeholder-shown:translate-y-0`}>
+        What are you considering?
       </label>
     </div>
   )
@@ -84,24 +96,21 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4" aria-busy={sending}>
       <input type="hidden" name="access_key" value={ACCESS_KEY} />
-      <input
-        type="hidden"
-        name="subject"
-        value="New Contact Form Submission - Miras Capital"
-      />
+      <input type="hidden" name="subject" value="New Contact Form Submission - Miras Capital" />
 
       <Field id="cf-name" name="name" type="text" label="Full name" autoComplete="name" />
       <Field id="cf-email" name="email" type="email" label="Email" autoComplete="email" />
       <Field id="cf-mobile" name="mobile" type="tel" label="Mobile" autoComplete="tel" />
+      <MessageField />
 
       <button
         type="submit"
         disabled={sending}
-        className="group mt-1 inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-orange px-6 py-4 text-sm font-semibold uppercase tracking-[0.12em] text-black transition duration-200 ease-out hover:bg-gold active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+        className="group mt-2 inline-flex w-full items-center justify-center gap-3 rounded-full bg-accent px-6 py-4 text-sm font-semibold text-ink transition-[background-color,transform,opacity] duration-200 ease-out hover:bg-accent-bright active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-65"
       >
-        {sending ? "Sending" : "Let's talk"}
+        {sending ? "Sending" : "Start the conversation"}
         {sending ? (
           <CircleNotch size={18} weight="bold" className="animate-spin" />
         ) : (
@@ -117,13 +126,13 @@ export function ContactForm() {
         <motion.div
           role="status"
           aria-live="polite"
-          initial={reduce ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 text-sm ${
+          initial={reduce ? false : { opacity: 0, transform: "translateY(6px)" }}
+          animate={{ opacity: 1, transform: "translateY(0px)" }}
+          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+          className={`flex items-center gap-2.5 rounded-2xl border px-4 py-3 text-sm ${
             ok
-              ? "border-gold/30 bg-gold/10 text-gold-light"
-              : "border-[#f1957f]/40 bg-[#f1957f]/10 text-[#f1957f]"
+              ? "border-accent/30 bg-accent/10 text-accent-bright"
+              : "border-[#f1957f]/40 bg-[#f1957f]/10 text-[#f4a18d]"
           }`}
         >
           {ok ? (
@@ -133,8 +142,8 @@ export function ContactForm() {
           )}
           <span>
             {ok
-              ? "Thanks, we'll be in touch shortly."
-              : "Something went wrong. Please email us directly."}
+              ? "Thanks. We will be in touch shortly."
+              : "Something went wrong. Please try again shortly."}
           </span>
         </motion.div>
       )}

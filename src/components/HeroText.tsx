@@ -1,76 +1,59 @@
 "use client"
 
+import { ArrowDownRight } from "@phosphor-icons/react"
 import { motion, useReducedMotion } from "motion/react"
 
-/**
- * Hero wordmark + tagline. Each line rises into place from behind an
- * overflow mask — the cinematic masked reveal — instead of a plain fade.
- * This is the first impression (seen once per visit), so a deliberate
- * stagger earns its keep: wordmark first, then each tagline line a beat
- * apart. Reduced-motion collapses everything to the static final state.
- */
 const EASE = [0.16, 1, 0.3, 1] as const
-
-function MaskedLine({
-  children,
-  delay,
-  reduce,
-}: {
-  children: React.ReactNode
-  delay: number
-  reduce: boolean
-}) {
-  return (
-    // The clip mask needs vertical breathing room or the tight hero
-    // leading-[0.95] lets `overflow-hidden` shave the tops of the capitals.
-    // Em-based padding (compensated by a negative margin so layout doesn't
-    // shift) scales with each line's own font size.
-    <span className="block overflow-hidden py-[0.12em] -my-[0.12em]">
-      <motion.span
-        className="block"
-        // The initial state must not branch on `reduce`: the server can't
-        // know the visitor's motion preference, so branching produces a
-        // hydration mismatch. Both environments render the masked state and
-        // reduced-motion visitors get a zero-duration snap to rest instead.
-        initial={{ y: "110%" }}
-        animate={{ y: "0%" }}
-        transition={reduce ? { duration: 0 } : { duration: 0.9, delay, ease: EASE }}
-      >
-        {children}
-      </motion.span>
-    </span>
-  )
-}
 
 export function HeroText() {
   const reduce = useReducedMotion() ?? false
+  const transition = (delay: number) =>
+    reduce ? { duration: 0 } : { duration: 0.9, delay, ease: EASE }
 
   return (
-    <div className="flex flex-1 flex-col justify-center pb-28">
-      <h1
-        translate="no"
-        className="font-display font-bold uppercase leading-[0.95] tracking-[0.02em] text-white"
-        style={{
-          fontSize: "clamp(2.75rem, 9vw, 6rem)",
-          textWrap: "balance",
-          textShadow: "0 2px 48px rgba(0,0,20,0.7)",
-        }}
+    <div className="flex min-h-[calc(100dvh-7rem)] flex-col justify-between pt-[18vh] sm:pt-[16vh]">
+      <div>
+        <div className="pb-[0.08em] text-center">
+          <motion.h1
+            translate="no"
+            initial={{ opacity: 0, transform: "translateY(24px)" }}
+            animate={{ opacity: 1, transform: "translateY(0px)" }}
+            transition={transition(0.06)}
+            className="whitespace-nowrap font-display text-[clamp(2.6rem,8.25vw,9rem)] font-bold uppercase leading-[0.9] tracking-[0.012em] text-cloud"
+          >
+            Miras Capital
+          </motion.h1>
+        </div>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, transform: "translateY(18px)" }}
+        animate={{ opacity: 1, transform: "translateY(0px)" }}
+        transition={transition(0.36)}
+        className="grid gap-7 border-y border-cloud/20 bg-black/15 px-5 py-6 backdrop-blur-[4px] sm:grid-cols-2 sm:px-6 lg:grid-cols-12 lg:gap-8"
       >
-        <MaskedLine delay={0.05} reduce={reduce}>
-          Miras Capital
-        </MaskedLine>
-      </h1>
-      <p
-        className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-white/80 sm:text-xl"
-        style={{ textShadow: "0 1px 24px rgba(0,0,20,0.85)" }}
-      >
-        <MaskedLine delay={0.22} reduce={reduce}>
-          Providing Independent Advice.
-        </MaskedLine>
-        <MaskedLine delay={0.34} reduce={reduce}>
-          Investing in Shared Ambitions.
-        </MaskedLine>
-      </p>
+        <p className="text-[1.4rem] font-medium leading-[1.08] tracking-[-0.035em] text-cloud sm:text-3xl lg:col-span-6 lg:text-4xl">
+          <span className="block whitespace-nowrap">Providing independent advice.</span>
+          <span className="block whitespace-nowrap">Investing in shared ambitions.</span>
+        </p>
+
+        <div className="sm:pl-4 lg:col-span-4 lg:col-start-8 lg:pl-0">
+          <p className="max-w-[34rem] text-sm leading-relaxed text-cloud/76 sm:text-base">
+            Miras Capital is an independent advisory and investment firm specialising in mergers and acquisitions, capital raisings, industry roll-ups and strategic advisory services.
+          </p>
+          <a
+            href="#contact"
+            className="group mt-6 inline-flex items-center gap-3 border-b border-accent pb-2 text-sm font-semibold text-cloud transition-colors duration-200 hover:text-accent active:translate-y-px"
+          >
+            Start a conversation
+            <ArrowDownRight
+              size={17}
+              weight="bold"
+              className="transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:translate-y-0.5"
+            />
+          </a>
+        </div>
+      </motion.div>
     </div>
   )
 }

@@ -1,71 +1,93 @@
 @import "tailwindcss";
 
-/* ── Miras Capital brand tokens ──────────────────────────────────────────────
-   The page itself is monochrome (black / grey / white); orange is the single
-   accent, used on the contact CTA, with golds supporting its hover/success
-   states. */
 @theme {
-  --color-orange: #cc922f;
-  --color-gold: #caa45d;
-  --color-gold-light: #d6c183;
-  --color-mist: #a6a6a6;
+  --color-ink: #001323;
+  --color-smoke: #031b2b;
+  --color-cloud: #f1f0ec;
+  --color-accent: #f18a35;
+  --color-accent-bright: #ffa14d;
 
   --font-display: var(--font-josefin);
-  --font-sans: Arial, Helvetica, sans-serif;
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
 
-  /* Strong UI easing curves — the built-in CSS easings lack the punch that
-     makes interactions feel intentional. These override the `ease-out` /
-     `ease-in-out` utilities so every transition shares one source of truth. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 :root {
   color-scheme: dark;
+  background: #001323;
 }
 
 html {
   scroll-behavior: smooth;
-  /* Matches the flow-field shader's base colour so there's no flash before the
-     fixed canvas paints. */
-  background-color: #000000;
-  /* Hide the scrollbar — the page scrolls freely (Lenis) and the progress dots
-     stand in as the position indicator. Firefox / legacy Edge. */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-/* WebKit / Blink */
-html::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
+  background: #001323;
 }
 
 body {
-  background-color: #000000;
-  color: #ffffff;
-  font-family: var(--font-sans);
+  margin: 0;
+  background: #001323;
+  color: #f1f0ec;
+  font-family: var(--font-plex-sans), Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Neutralise Chrome's autofill styling — it paints a blue-grey background on
-   autofilled inputs (dark colour-scheme) that `background-color` can't override.
-   The absurdly long background-color transition keeps that fill from ever
-   showing, so the field keeps its own translucent background. */
+::selection {
+  background: rgba(241, 138, 53, 0.34);
+  color: #f1f0ec;
+}
+
+a,
+button,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid #f18a35;
+  outline-offset: 4px;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: #ffffff;
-  caret-color: #ffffff;
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f1f0ec;
+  caret-color: #f1f0ec;
   transition: background-color 9999s ease-in-out 0s;
 }
 
-/* The harbour backdrop is a static B&W photo (see ImmersiveBackground.tsx) — no
-   camera drift / animation. */
+.capability-row h3,
+.capability-row p {
+  transition: color 200ms ease, transform 240ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .capability-row:hover h3 {
+    color: #f18a35;
+    transform: translateX(8px);
+  }
+
+  .capability-row:hover p {
+    color: rgba(241, 240, 236, 0.78);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
   }
 }
