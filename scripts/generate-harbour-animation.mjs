@@ -1,16 +1,22 @@
-import { mkdir } from "node:fs/promises"
+import { spawn } from "node:child_process"
+import { access, mkdir, rename } from "node:fs/promises"
+import { createRequire } from "node:module"
 import path from "node:path"
 import sharp from "sharp"
 
-const WIDTH = 1280
-const HEIGHT = 720
+const WIDTH = 1672
+const HEIGHT = 941
+const SCALE_X = WIDTH / 1280
+const SCALE_Y = HEIGHT / 720
+const SCALE = (SCALE_X + SCALE_Y) / 2
 const CHANNELS = 4
-const WATERLINE = 588
+const WATERLINE = Math.round(588 * SCALE_Y)
 const TRANSITION_FRAMES = 72
-const LOOP_FRAMES = 36
-const TRANSITION_DELAY = 80
-const LOOP_DELAY = 80
+const LOOP_FRAMES = 42
+const TRANSITION_DELAY = 70
+const LOOP_DELAY = 70
 const animationsOnly = process.argv.includes("--animations-only")
+const require = createRequire(import.meta.url)
 
 const root = process.cwd()
 const sourceDir = path.join(root, "public")
@@ -39,7 +45,7 @@ for (let index = 0; index < TRANSITION_FRAMES; index += 1) {
     from: sunset,
     to: evening,
     progress,
-    phase: progress * Math.PI * 5.5,
+    phase: progress * Math.PI * 4,
     lightProgress: smoothstep(0.24, 0.92, progress),
     travellingLight: progress,
   })
@@ -78,6 +84,32 @@ await writeAnimation(
   LOOP_DELAY,
   0,
 )
+await Promise.all([
+  writeVideo(
+    path.join(transitionDir, "harbour-transition-%03d.webp"),
+    path.join(outputDir, "harbour-sunset-transition.mp4"),
+    TRANSITION_DELAY,
+    "mp4",
+  ),
+  writeVideo(
+    path.join(loopDir, "harbour-loop-%03d.webp"),
+    path.join(outputDir, "harbour-evening-loop.mp4"),
+    LOOP_DELAY,
+    "mp4",
+  ),
+  writeVideo(
+    path.join(transitionDir, "harbour-transition-%03d.webp"),
+    path.join(outputDir, "harbour-sunset-transition.webm"),
+    TRANSITION_DELAY,
+    "webm",
+  ),
+  writeVideo(
+    path.join(loopDir, "harbour-loop-%03d.webp"),
+    path.join(outputDir, "harbour-evening-loop.webm"),
+    LOOP_DELAY,
+    "webm",
+  ),
+])
 
 console.log(`Rendered ${TRANSITION_FRAMES} sunset frames and ${LOOP_FRAMES} evening loop frames.`)
 
@@ -94,7 +126,7 @@ function renderFrame({ from, to, progress, phase, lightProgress, travellingLight
   const frame = Buffer.allocUnsafe(WIDTH * HEIGHT * CHANNELS)
   const colorProgress = smootherstep(0.04, 0.96, progress)
   const eveningDepth = smootherstep(0.48, 1, progress)
-  const sunCenterY = 458 + progress * 34
+  const sunCenterY = (458 + progress * 34) * SCALE_Y
 
   for (let y = 0; y < HEIGHT; y += 1) {
     const waterDepth = Math.max(0, (y - WATERLINE) / (HEIGHT - WATERLINE))
@@ -104,17 +136,25 @@ function renderFrame({ from, to, progress, phase, lightProgress, travellingLight
 
       if (y >= WATERLINE) {
         const horizontalWave =
-          Math.sin((y - WATERLINE) * 0.145 + phase * 1.35) * (0.8 + waterDepth * 2.8) +
-          Math.sin(y * 0.047 - phase * 0.72) * 1.15
-        const verticalWave = Math.sin(x * 0.024 + phase * 1.1) * (0.35 + waterDepth * 1.3)
+          Math.sin(((y - WATERLINE) / SCALE_Y) * 0.145 + phase * 1.35) *
+            (0.8 + waterDepth * 2.8) * SCALE_X +
+          Math.sin((y / SCALE_Y) * 0.047 - phase * 0.72) * 1.15 * SCALE_X
+        const verticalWave =
+          Math.sin((x / SCALE_X) * 0.024 + phase * 1.1) *
+          (0.35 + waterDepth * 1.3) * SCALE_Y
         sourceX = clamp(Math.round(x + horizontalWave), 0, WIDTH - 1)
         sourceY = clamp(Math.round(y + verticalWave), WATERLINE, HEIGHT - 1)
       }
 
       const sourceOffset = (sourceY * WIDTH + sourceX) * CHANNELS
       const outputOffset = (y * WIDTH + x) * CHANNELS
-      const horizonWarmth = y < WATERLINE ? (1 - progress) * Math.max(0, 1 - Math.abs(y - 500) / 230) : 0
-      const sunDistance = Math.sqrt(((x - 270) / 480) ** 2 + ((y - sunCenterY) / 210) ** 2)
+      const horizonWarmth = y < WATERLINE
+        ? (1 - progress) * Math.max(0, 1 - Math.abs(y / SCALE_Y - 500) / 230)
+        : 0
+      const sunDistance = Math.sqrt(
+        ((x - 270 * SCALE_X) / (480 * SCALE_X)) ** 2 +
+        ((y - sunCenterY) / (210 * SCALE_Y)) ** 2,
+      )
       const settingSun = y < WATERLINE ? Math.max(0, 1 - sunDistance) ** 2 * (1 - colorProgress) : 0
       const red = mix(from[sourceOffset], to[sourceOffset], colorProgress)
       const green = mix(from[sourceOffset + 1], to[sourceOffset + 1], colorProgress)
@@ -144,43 +184,44 @@ function addBridgeLights(frame, lightProgress, travellingLight) {
 
   for (let index = 0; index < lightCount; index += 1) {
     const t = index / (lightCount - 1)
-    const x = Math.round(mix(474, 1052, t))
-    const y = Math.round(386 + 0.00082 * (x - 762) ** 2)
+    const baseX = mix(474, 1052, t)
+    const x = Math.round(baseX * SCALE_X)
+    const y = Math.round((386 + 0.00082 * (baseX - 762) ** 2) * SCALE_Y)
     const activation = clamp((lightProgress - t * 0.82) / 0.12, 0, 1)
     const travelDistance = circularDistance(index, travellingIndex, lightCount)
     const pulse = Math.exp(-(travelDistance ** 2) / 3.8) * (lightProgress > 0.96 ? 0.24 : 0.16)
     const strength = activation * (0.3 + pulse)
 
     if (strength > 0.02) {
-      addGlow(frame, x, y, 3.2, [255, 190, 104], strength)
-      addGlow(frame, x, y, 0.9, [255, 229, 174], Math.min(0.72, strength + 0.18))
+      addGlow(frame, x, y, 3.2 * SCALE, [255, 190, 104], strength)
+      addGlow(frame, x, y, 0.9 * SCALE, [255, 229, 174], Math.min(0.72, strength + 0.18))
     }
   }
 
   const deckCount = 34
   for (let index = 0; index < deckCount; index += 1) {
     const t = index / (deckCount - 1)
-    const x = Math.round(mix(450, 1092, t))
-    const y = Math.round(499 + t * 6)
+    const x = Math.round(mix(450, 1092, t) * SCALE_X)
+    const y = Math.round((499 + t * 6) * SCALE_Y)
     const activation = clamp((lightProgress - t * 0.9) / 0.1, 0, 1)
-    if (activation > 0.02) addGlow(frame, x, y, 1.8, [255, 201, 125], activation * 0.3)
+    if (activation > 0.02) addGlow(frame, x, y, 1.8 * SCALE, [255, 201, 125], activation * 0.3)
   }
 }
 
 function addWaterReflections(frame, phase, lightProgress, travellingLight) {
   const anchors = [184, 308, 420, 516, 692, 770, 866, 968, 1082]
   for (let anchorIndex = 0; anchorIndex < anchors.length; anchorIndex += 1) {
-    const anchorX = anchors[anchorIndex]
+    const anchorX = anchors[anchorIndex] * SCALE_X
     const anchorStrength = 0.16 + lightProgress * 0.24
-    for (let y = WATERLINE + 8; y < HEIGHT; y += 3) {
+    for (let y = WATERLINE + Math.round(8 * SCALE_Y); y < HEIGHT; y += Math.max(3, Math.round(3 * SCALE_Y))) {
       const depth = (y - WATERLINE) / (HEIGHT - WATERLINE)
       const sway =
-        Math.sin(y * 0.13 + phase * 1.7 + anchorIndex) * (2 + depth * 8) +
-        Math.sin(y * 0.047 - phase + anchorIndex * 0.7) * 3
+        Math.sin((y / SCALE_Y) * 0.13 + phase * 1.7 + anchorIndex) * (2 + depth * 8) * SCALE_X +
+        Math.sin((y / SCALE_Y) * 0.047 - phase + anchorIndex * 0.7) * 3 * SCALE_X
       const chase = 0.65 + 0.35 * Math.sin(travellingLight * Math.PI * 2 - anchorIndex * 0.72)
       const x = Math.round(anchorX + sway)
-      const width = 1 + Math.round(depth * 3)
-      const flicker = 0.45 + 0.55 * Math.sin(y * 0.22 + phase * 2.4 + anchorIndex) ** 2
+      const width = Math.max(1, Math.round((1 + depth * 3) * SCALE_X))
+      const flicker = 0.45 + 0.55 * Math.sin((y / SCALE_Y) * 0.22 + phase * 2.4 + anchorIndex) ** 2
       const strength = anchorStrength * (1 - depth * 0.55) * flicker * chase
       addHorizontalDash(frame, x, y, width, [244, 179, 94], strength)
     }
@@ -217,9 +258,12 @@ function blendAdd(frame, x, y, color, alpha) {
 }
 
 async function writeFrame(frame, directory, filename) {
+  const output = path.join(directory, filename)
+  const temporary = `${output}.${process.pid}.tmp`
   await sharp(frame, { raw: { width: WIDTH, height: HEIGHT, channels: CHANNELS } })
-    .webp({ quality: 78, effort: 4, smartSubsample: true })
-    .toFile(path.join(directory, filename))
+    .webp({ quality: 90, effort: 5, smartSubsample: false })
+    .toFile(temporary)
+  await rename(temporary, output)
 }
 
 async function writeAnimation(frames, output, delay, loop) {
@@ -233,14 +277,54 @@ async function writeAnimation(frames, output, delay, loop) {
     },
   })
     .webp({
-      quality: 80,
+      quality: 92,
       effort: 6,
-      smartSubsample: true,
+      smartSubsample: false,
       delay: Array(frames.length).fill(delay),
       loop,
       minSize: true,
     })
     .toFile(output)
+}
+
+async function writeVideo(inputPattern, output, delay, format) {
+  const ffmpegPath = await resolveFfmpegPath()
+  const frameRate = `1000/${delay}`
+  const codecOptions = format === "webm"
+    ? ["-c:v", "libvpx-vp9", "-crf", "18", "-b:v", "0", "-deadline", "good", "-cpu-used", "2", "-row-mt", "1"]
+    : ["-c:v", "libx264", "-preset", "slow", "-crf", "14", "-profile:v", "high", "-level", "4.1", "-movflags", "+faststart"]
+
+  await new Promise((resolve, reject) => {
+    const encoder = spawn(ffmpegPath, [
+      "-y",
+      "-framerate",
+      frameRate,
+      "-start_number",
+      "1",
+      "-i",
+      inputPattern,
+      "-vf",
+      "scale=1920:1080:flags=lanczos,format=yuv420p",
+      "-an",
+      ...codecOptions,
+      output,
+    ], { stdio: "inherit" })
+
+    encoder.once("error", reject)
+    encoder.once("exit", (code) => {
+      if (code === 0) resolve()
+      else reject(new Error(`FFmpeg exited with code ${code}`))
+    })
+  })
+}
+
+async function resolveFfmpegPath() {
+  const bundledPath = require("ffmpeg-static")
+  if (bundledPath) return bundledPath
+
+  const windowsArmFallback = path.join(root, "node_modules", "ffmpeg-static", "ffmpeg.exe")
+  await access(windowsArmFallback)
+  return windowsArmFallback
 }
 
 function mix(a, b, amount) {
