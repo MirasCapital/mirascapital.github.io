@@ -30,7 +30,9 @@ await Promise.all([
 ])
 
 const sunset = await loadRgba(path.join(sourceDir, "miras-sydney-harbour-sunset.png"))
-const evening = await loadRgba(path.join(sourceDir, "miras-sydney-harbour-evening.png"))
+const eveningReference = await loadRgba(path.join(sourceDir, "miras-sydney-harbour-evening.png"))
+const evening = createAlignedEvening(sunset, eveningReference)
+await writeAlignedEvening(evening)
 
 const transitionRaw = []
 for (let index = 0; index < TRANSITION_FRAMES; index += 1) {
@@ -176,6 +178,90 @@ function renderFrame({ from, to, progress, phase, lightProgress, travellingLight
   addBridgeLights(frame, lightProgress, travellingLight)
   addWaterReflections(frame, phase, lightProgress, travellingLight)
   return frame
+}
+
+function createAlignedEvening(source, reference) {
+  const output = Buffer.allocUnsafe(source.length)
+  const bands = [
+    getColorStats(source, reference, 0, Math.round(520 * SCALE_Y)),
+    getColorStats(source, reference, Math.round(480 * SCALE_Y), WATERLINE),
+    getColorStats(source, reference, WATERLINE, HEIGHT),
+  ]
+
+  for (let y = 0; y < HEIGHT; y += 1) {
+    const horizonBlend = smoothstep(470 * SCALE_Y, 560 * SCALE_Y, y)
+    const waterBlend = smoothstep(WATERLINE - 18 * SCALE_Y, WATERLINE + 18 * SCALE_Y, y)
+    for (let x = 0; x < WIDTH; x += 1) {
+      const offset = (y * WIDTH + x) * CHANNELS
+      for (let channel = 0; channel < 3; channel += 1) {
+        const upper = transferChannel(source[offset + channel], bands[0], channel)
+        const horizon = transferChannel(source[offset + channel], bands[1], channel)
+        const water = transferChannel(source[offset + channel], bands[2], channel)
+        const landValue = mix(upper, horizon, horizonBlend)
+        output[offset + channel] = clampByte(mix(landValue, water, waterBlend))
+      }
+      output[offset + 3] = 255
+    }
+  }
+
+  return output
+}
+
+function getColorStats(source, reference, startY, endY) {
+  const sourceMean = [0, 0, 0]
+  const referenceMean = [0, 0, 0]
+  const sourceVariance = [0, 0, 0]
+  const referenceVariance = [0, 0, 0]
+  const sampleStep = 4
+  let count = 0
+
+  for (let y = startY; y < endY; y += sampleStep) {
+    for (let x = 0; x < WIDTH; x += sampleStep) {
+      const offset = (y * WIDTH + x) * CHANNELS
+      for (let channel = 0; channel < 3; channel += 1) {
+        sourceMean[channel] += source[offset + channel]
+        referenceMean[channel] += reference[offset + channel]
+      }
+      count += 1
+    }
+  }
+
+  for (let channel = 0; channel < 3; channel += 1) {
+    sourceMean[channel] /= count
+    referenceMean[channel] /= count
+  }
+
+  for (let y = startY; y < endY; y += sampleStep) {
+    for (let x = 0; x < WIDTH; x += sampleStep) {
+      const offset = (y * WIDTH + x) * CHANNELS
+      for (let channel = 0; channel < 3; channel += 1) {
+        sourceVariance[channel] += (source[offset + channel] - sourceMean[channel]) ** 2
+        referenceVariance[channel] += (reference[offset + channel] - referenceMean[channel]) ** 2
+      }
+    }
+  }
+
+  return {
+    sourceMean,
+    referenceMean,
+    sourceStd: sourceVariance.map((value) => Math.sqrt(value / count)),
+    referenceStd: referenceVariance.map((value) => Math.sqrt(value / count)),
+  }
+}
+
+function transferChannel(value, stats, channel) {
+  const sourceStd = Math.max(1, stats.sourceStd[channel])
+  const contrast = stats.referenceStd[channel] / sourceStd
+  return stats.referenceMean[channel] + (value - stats.sourceMean[channel]) * contrast
+}
+
+async function writeAlignedEvening(frame) {
+  const output = path.join(sourceDir, "miras-sydney-harbour-evening.png")
+  const temporary = `${output}.${process.pid}.tmp`
+  await sharp(frame, { raw: { width: WIDTH, height: HEIGHT, channels: CHANNELS } })
+    .png({ compressionLevel: 9 })
+    .toFile(temporary)
+  await rename(temporary, output)
 }
 
 function addBridgeLights(frame, lightProgress, travellingLight) {
