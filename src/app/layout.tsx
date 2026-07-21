@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { IBM_Plex_Mono, IBM_Plex_Sans, Josefin_Sans } from "next/font/google"
+import { Geist_Mono, Instrument_Sans, Instrument_Serif, Josefin_Sans } from "next/font/google"
 import { SmoothScroll } from "@/components/SmoothScroll"
 import "./globals.css"
 
@@ -11,17 +11,23 @@ const josefin = Josefin_Sans({
   display: "swap",
 })
 
-const plexSans = IBM_Plex_Sans({
+// Editorial display serif for headlines (single 400 weight by design).
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex-sans",
+  weight: "400",
+  variable: "--font-instrument-serif",
   display: "swap",
 })
 
-const plexMono = IBM_Plex_Mono({
+const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-plex-mono",
+  variable: "--font-instrument-sans",
+  display: "swap",
+})
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
   display: "swap",
 })
 
@@ -77,7 +83,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${josefin.variable} ${plexSans.variable} ${plexMono.variable}`}>
+    <html
+      lang="en"
+      className={`${josefin.variable} ${instrumentSerif.variable} ${instrumentSans.variable} ${geistMono.variable}`}
+    >
       <body>
         <SmoothScroll />
         {children}

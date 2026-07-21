@@ -69,7 +69,7 @@ export default function Home() {
               <p className="mb-8 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-accent">
                 About Miras
               </p>
-              <h2 className="max-w-[13ch] text-5xl font-medium leading-[0.98] tracking-[-0.052em] text-balance sm:text-7xl lg:text-[6.3rem]">
+              <h2 className="max-w-[13ch] font-serif text-[3.3rem] leading-[1.04] tracking-[-0.01em] text-balance sm:text-[5rem] lg:text-[6.9rem]">
                 Independent advice. Aligned interests.
               </h2>
             </div>
@@ -108,8 +108,8 @@ export default function Home() {
               <p className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-accent">
                 What we do
               </p>
-              <h2 className="mt-7 max-w-[11ch] text-4xl font-medium leading-[1.02] tracking-[-0.045em] text-balance sm:text-6xl">
-                Senior-led advice. Investor mindset.
+              <h2 className="mt-7 max-w-[13ch] font-serif text-[2.5rem] leading-[1.05] tracking-[-0.01em] text-balance sm:text-[4.1rem]">
+                <span className="whitespace-nowrap">Senior-led</span> advice. Investor mindset.
               </h2>
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-cloud/56">
                 We bring direct, experienced judgement to consequential business decisions. Every engagement is shaped around the opportunity, never a standard template.
@@ -137,7 +137,7 @@ export default function Home() {
               <p className="mb-8 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-accent">
                 Selected experience
               </p>
-              <h2 className="max-w-[12ch] text-5xl font-medium leading-[0.99] tracking-[-0.05em] text-balance sm:text-7xl">
+              <h2 className="max-w-[12ch] font-serif text-[3.3rem] leading-[1.05] tracking-[-0.01em] text-balance sm:text-[5rem]">
                 Recent transactions.
               </h2>
             </div>
@@ -156,7 +156,7 @@ export default function Home() {
             <p className="mb-8 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-accent">
               Aligned interests
             </p>
-            <h2 className="max-w-[13ch] text-5xl font-medium leading-[0.99] tracking-[-0.05em] text-balance sm:text-7xl">
+            <h2 className="max-w-[13ch] font-serif text-[3.3rem] leading-[1.05] tracking-[-0.01em] text-balance sm:text-[5rem]">
               Advice built around the outcome.
             </h2>
           </Reveal>
@@ -178,7 +178,7 @@ export default function Home() {
             <p className="mb-8 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-accent">
               Start a conversation
             </p>
-            <h2 className="max-w-[10ch] text-5xl font-medium leading-[1.01] tracking-[-0.05em] text-balance sm:text-7xl">
+            <h2 className="max-w-[10ch] font-serif text-[3.3rem] leading-[1.05] tracking-[-0.01em] text-balance sm:text-[5rem]">
               Your first move shapes the game.
             </h2>
             <p className="mt-9 max-w-sm text-sm leading-relaxed text-cloud/48">

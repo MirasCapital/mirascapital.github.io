@@ -8,8 +8,9 @@
   --color-accent-bright: #ffa14d;
 
   --font-display: var(--font-josefin);
-  --font-sans: var(--font-plex-sans);
-  --font-mono: var(--font-plex-mono);
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-instrument-sans);
+  --font-mono: var(--font-geist-mono);
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -29,7 +30,7 @@ body {
   margin: 0;
   background: #001323;
   color: #f1f0ec;
-  font-family: var(--font-plex-sans), Arial, sans-serif;
+  font-family: var(--font-instrument-sans), Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

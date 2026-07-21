@@ -32,7 +32,7 @@ export function HeroText() {
         transition={transition(0.36)}
         className="grid gap-7 border-y border-cloud/20 bg-black/15 px-5 py-6 backdrop-blur-[4px] sm:grid-cols-2 sm:px-6 lg:grid-cols-12 lg:gap-8"
       >
-        <p className="text-[1.4rem] font-medium leading-[1.08] tracking-[-0.035em] text-cloud sm:text-3xl lg:col-span-6 lg:text-4xl">
+        <p className="font-serif text-[1.55rem] leading-[1.08] tracking-[-0.01em] text-cloud sm:text-[2.05rem] lg:col-span-6 lg:text-[2.5rem]">
           <span className="block whitespace-nowrap">Providing independent advice.</span>
           <span className="block whitespace-nowrap">Investing in shared ambitions.</span>
         </p>
