@@ -111,7 +111,7 @@ export default function Home() {
               <h2 className="mt-7 max-w-[13ch] font-serif text-[2.5rem] leading-[1.05] tracking-[-0.01em] text-balance sm:text-[4.1rem]">
                 <span className="whitespace-nowrap">Senior-led</span> advice. Investor mindset.
               </h2>
-              <p className="mt-7 max-w-xl text-lg leading-relaxed text-cloud/56">
+              <p className="mt-8 max-w-[38rem] text-[1.05rem] leading-[1.7] tracking-[-0.005em] text-cloud/68 sm:text-[1.2rem]">
                 We bring direct, experienced judgement to consequential business decisions. Every engagement is shaped around the opportunity, never a standard template.
               </p>
             </Reveal>
@@ -119,9 +119,13 @@ export default function Home() {
             <div className="mt-14">
               {advisoryServices.map((item, index) => (
                 <Reveal key={item.title} delay={index * 0.06}>
-                  <article className="capability-row border-t border-cloud/12 py-7 sm:grid sm:grid-cols-[1fr_1.2fr] sm:gap-8">
-                    <h3 className="text-xl font-medium tracking-[-0.025em] sm:text-2xl">{item.title}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-cloud/50 sm:mt-0">{item.body}</p>
+                  <article className="capability-row border-t border-cloud/12 py-8 sm:grid sm:grid-cols-[minmax(0,0.95fr)_minmax(0,1.25fr)] sm:gap-12 lg:py-9">
+                    <h3 className="font-serif text-[1.65rem] leading-[1.08] tracking-[-0.012em] text-cloud/92 sm:text-[1.9rem]">
+                      {item.title}
+                    </h3>
+                    <p className="mt-4 max-w-[42ch] text-[0.94rem] leading-[1.65] tracking-[-0.005em] text-cloud/62 sm:mt-0 sm:pt-1 sm:text-[0.98rem]">
+                      {item.body}
+                    </p>
                   </article>
                 </Reveal>
               ))}

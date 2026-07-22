@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist_Mono, Instrument_Sans, Instrument_Serif, Josefin_Sans } from "next/font/google"
+import { DM_Sans, Instrument_Serif, Josefin_Sans } from "next/font/google"
 import { SmoothScroll } from "@/components/SmoothScroll"
 import "./globals.css"
 
@@ -19,15 +19,9 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 })
 
-const instrumentSans = Instrument_Sans({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-instrument-sans",
-  display: "swap",
-})
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
+  variable: "--font-dm-sans",
   display: "swap",
 })
 
@@ -85,7 +79,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${josefin.variable} ${instrumentSerif.variable} ${instrumentSans.variable} ${geistMono.variable}`}
+      className={`${josefin.variable} ${instrumentSerif.variable} ${dmSans.variable}`}
     >
       <body>
         <SmoothScroll />

@@ -9,8 +9,8 @@
 
   --font-display: var(--font-josefin);
   --font-serif: var(--font-instrument-serif), Georgia, serif;
-  --font-sans: var(--font-instrument-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-dm-sans);
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -30,7 +30,7 @@ body {
   margin: 0;
   background: #001323;
   color: #f1f0ec;
-  font-family: var(--font-instrument-sans), Arial, sans-serif;
+  font-family: var(--font-dm-sans), Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -65,13 +65,12 @@ textarea:-webkit-autofill:focus {
 
 .capability-row h3,
 .capability-row p {
-  transition: color 200ms ease, transform 240ms var(--ease-out);
+  transition: color 200ms ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .capability-row:hover h3 {
     color: #f18a35;
-    transform: translateX(8px);
   }
 
   .capability-row:hover p {
