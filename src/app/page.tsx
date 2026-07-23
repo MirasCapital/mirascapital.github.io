@@ -74,10 +74,10 @@ export default function Home() {
               </h2>
             </div>
             <div className="flex flex-col justify-end lg:col-span-4 lg:col-start-9 lg:pb-2">
-              <p className="text-xl leading-relaxed text-cloud/72 sm:text-2xl">
+              <p className="text-[1.05rem] leading-[1.7] tracking-[-0.005em] text-cloud/72 sm:text-xl">
                 We work alongside business owners, boards and investors when the decisions carry lasting consequences, bringing senior attention, commercial judgement and an investor mindset to every engagement.
               </p>
-              <p className="mt-7 text-xl leading-relaxed text-cloud/72 sm:text-2xl">
+              <p className="mt-7 text-[1.05rem] leading-[1.7] tracking-[-0.005em] text-cloud/72 sm:text-xl">
                 Our advice is shaped around each business and its ambitions, with experienced involvement from the first strategic question through to completion.
               </p>
             </div>
@@ -145,7 +145,7 @@ export default function Home() {
                 Recent transactions.
               </h2>
             </div>
-            <p className="max-w-md self-end text-base leading-relaxed text-cloud/50 lg:col-span-3 lg:col-start-10">
+            <p className="max-w-md self-end text-[1.05rem] leading-[1.7] tracking-[-0.005em] text-cloud/50 sm:text-xl lg:col-span-3 lg:col-start-10">
               Selected work across mergers and acquisitions, capital raisings and strategic advice.
             </p>
           </Reveal>
@@ -166,10 +166,10 @@ export default function Home() {
           </Reveal>
 
           <Reveal delay={0.08} className="lg:col-span-4 lg:col-start-9 lg:pt-28">
-            <p className="text-xl leading-relaxed text-cloud/70">
+            <p className="text-[1.05rem] leading-[1.7] tracking-[-0.005em] text-cloud/70 sm:text-xl">
               We prioritise aligned interests and long-term trusted-advisor partnerships.
             </p>
-            <p className="mt-7 text-xl leading-relaxed text-cloud/70">
+            <p className="mt-7 text-[1.05rem] leading-[1.7] tracking-[-0.005em] text-cloud/70 sm:text-xl">
               Our flexible fee structures often include equity participation, keeping our interests connected to the value created beyond a transaction.
             </p>
           </Reveal>
@@ -185,7 +185,7 @@ export default function Home() {
             <h2 className="max-w-[10ch] font-serif text-[3.3rem] leading-[1.05] tracking-[-0.01em] text-balance sm:text-[5rem]">
               Your first move shapes the game.
             </h2>
-            <p className="mt-9 max-w-sm text-sm leading-relaxed text-cloud/48">
+            <p className="mt-9 max-w-sm text-[1.05rem] leading-[1.7] tracking-[-0.005em] text-cloud/48 sm:text-xl">
               Tell us your goals, and together we&apos;ll help you make them happen.
             </p>
           </Reveal>
