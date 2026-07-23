@@ -17,13 +17,14 @@ function Tombstone({ deal }: { deal: Deal }) {
     <article className="group flex h-full min-h-[330px] flex-col bg-white p-7 text-ink shadow-[0_24px_70px_rgba(0,0,0,0.2)] ring-1 ring-ink/5 transition-transform duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1">
       <div className="flex flex-1 flex-col items-center justify-center gap-5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={deal.logo} alt={deal.alt} className="h-20 w-auto max-w-[200px] object-contain" />
+        <img src={deal.logo} alt={deal.alt} draggable={false} className="h-20 w-auto max-w-[200px] object-contain" />
         <span className="text-center text-sm italic text-neutral-500">{deal.type}</span>
         {deal.counter && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={deal.counter}
             alt={deal.counterAlt ?? ""}
+            draggable={false}
             className="h-[72px] w-auto max-w-[180px] object-contain"
           />
         )}
@@ -39,6 +40,7 @@ function Tombstone({ deal }: { deal: Deal }) {
 
 function MobileCarousel({ transactions }: { transactions: Deal[] }) {
   const ref = useRef<HTMLDivElement>(null)
+  const mouseDrag = useRef({ active: false, pointerId: -1, startX: 0, scrollLeft: 0 })
   const loop = [...transactions, ...transactions, ...transactions]
 
   useEffect(() => {
@@ -77,10 +79,43 @@ function MobileCarousel({ transactions }: { transactions: Deal[] }) {
     }
   }, [transactions.length])
 
+  const startMouseDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse" || event.button !== 0 || !ref.current) return
+    mouseDrag.current = {
+      active: true,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      scrollLeft: ref.current.scrollLeft,
+    }
+    ref.current.setPointerCapture(event.pointerId)
+  }
+
+  const moveMouseDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = mouseDrag.current
+    if (!drag.active || drag.pointerId !== event.pointerId || !ref.current) return
+    event.preventDefault()
+    ref.current.scrollLeft = drag.scrollLeft - (event.clientX - drag.startX)
+  }
+
+  const endMouseDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!mouseDrag.current.active || mouseDrag.current.pointerId !== event.pointerId) return
+    mouseDrag.current.active = false
+    if (ref.current?.hasPointerCapture(event.pointerId)) {
+      ref.current.releasePointerCapture(event.pointerId)
+    }
+  }
+
   return (
     <div
       ref={ref}
-      className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:hidden [&::-webkit-scrollbar]:hidden"
+      role="region"
+      aria-label="Recent transactions. Swipe or drag horizontally to explore."
+      onPointerDown={startMouseDrag}
+      onPointerMove={moveMouseDrag}
+      onPointerUp={endMouseDrag}
+      onPointerCancel={endMouseDrag}
+      onDragStart={(event) => event.preventDefault()}
+      className="-mx-5 flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-5 pb-4 select-none active:cursor-grabbing [scrollbar-width:none] [-webkit-overflow-scrolling:touch] sm:hidden [&::-webkit-scrollbar]:hidden"
     >
       {loop.map((deal, index) => (
         <div key={`${deal.alt}-${index}`} className="w-[270px] shrink-0 snap-center snap-always">
