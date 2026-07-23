@@ -13,16 +13,16 @@ export function HeroText() {
   return (
     <div className="flex min-h-[calc(100dvh-7rem)] flex-col justify-between pt-[13vh] sm:pt-[16vh]">
       <div>
-        <div className="pb-[0.08em] text-left sm:text-center">
+        <div className="pb-[0.08em] text-left md:text-center">
           <motion.h1
             translate="no"
             initial={{ opacity: 0, transform: "translateY(24px)" }}
             animate={{ opacity: 1, transform: "translateY(0px)" }}
             transition={transition(0.06)}
-            className="font-display text-[clamp(4.5rem,20vw,6rem)] font-bold uppercase leading-[0.84] tracking-[-0.012em] text-cloud sm:whitespace-nowrap sm:text-[clamp(2.6rem,8.25vw,9rem)] sm:leading-[0.9] sm:tracking-[0.012em]"
+            className="font-display text-[clamp(4.5rem,20vw,6rem)] font-bold uppercase leading-[0.84] tracking-[-0.012em] text-cloud md:whitespace-nowrap md:text-[clamp(4.5rem,10vw,9rem)] md:leading-[0.9] md:tracking-[0.012em]"
           >
-            <span className="block sm:inline">Miras</span>{" "}
-            <span className="block sm:inline">Capital</span>
+            <span className="block md:inline">Miras</span>{" "}
+            <span className="block md:inline">Capital</span>
           </motion.h1>
         </div>
       </div>

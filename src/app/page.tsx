@@ -1,4 +1,4 @@
-import Image from "next/image"
+import { ArchitecturalSeries } from "@/components/ArchitecturalSeries"
 import { ContactForm } from "@/components/ContactForm"
 import { HeroText } from "@/components/HeroText"
 import { ImmersiveBackground } from "@/components/ImmersiveBackground"
@@ -90,17 +90,7 @@ export default function Home() {
       <section className="relative z-10 bg-ink px-5 pb-28 sm:px-8 sm:pb-36 lg:px-12 lg:pb-44">
         <div className="mx-auto grid max-w-[1440px] gap-12 border-t border-cloud/12 pt-10 lg:grid-cols-12 lg:gap-8 lg:pt-14">
           <Reveal className="relative min-h-[430px] overflow-hidden sm:min-h-[600px] lg:col-span-6 lg:min-h-[720px]">
-            <Image
-              src="/miras-opera-detail.png"
-              alt="Architectural detail of the Sydney Opera House sails"
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_50%,rgba(5,8,11,0.55)_100%)]" />
-            <span className="absolute bottom-5 left-5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-cloud/62 sm:bottom-7 sm:left-7">
-              Sydney / Built for the long term
-            </span>
+            <ArchitecturalSeries />
           </Reveal>
 
           <div className="lg:col-span-5 lg:col-start-8 lg:pt-14">
@@ -197,7 +187,6 @@ export default function Home() {
         <footer className="mx-auto flex max-w-[1440px] flex-col gap-5 py-8 text-xs text-cloud/42 sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Miras Capital</span>
           <div className="flex gap-6">
-            <span>Sydney, Australia</span>
             <a href="#top" className="transition-colors duration-200 hover:text-cloud">Back to top</a>
           </div>
         </footer>
